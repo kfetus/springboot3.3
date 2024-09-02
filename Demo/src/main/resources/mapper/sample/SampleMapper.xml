@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="demo.sample.SampleMapper">
+
+   <select id="selectList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT /* SampleMapper.selectList 목록 조회 샘플 */
+				PK 
+				, VARCHAR_COL 
+				, INT_COL 
+				, DATE_COL 
+				, CHAR_COL 
+				, BLOB_NAME 
+				, DESCRIP 
+				, CNG_DT 
+		FROM SAMPLE_TABLE 
+		<where>
+			<if test="charCol != null and charCol != '' ">AND CHAR_COL = #{charCol} </if>
+			<if test="descrip != null and descrip != '' ">AND DESCRIP LIKE CONCAT('%',#{descrip},'%') </if>
+		</where>
+		ORDER BY PK
+    </select>
+
+
+	<!-- pk AUTO_INCREMENT. pk 컬럼이 autoIncrement로 DB에 설정되어 있을 경우 자동 증가하면서 insert -->	
+	<insert id="insertFileUploadTest" parameterType="java.util.HashMap" useGeneratedKeys="true" keyProperty="SEQ">
+		INSERT INTO SAMPLE_TABLE ( /* SampleMapper.insertFileUploadTest insert 샘플 */
+				VARCHAR_COL
+				, INT_COL
+				, DATE_COL
+				, CHAR_COL
+				, BLOB_NAME
+				, BLOB_DATA
+				, DESCRIP
+				, CNG_DT
+			) VALUE
+			(
+				#{varcharCol}
+				, #{intCol}
+				, #{dateCol}
+				, #{charCol}
+				, #{blobName}
+				, #{blobData}
+				, #{descrip}
+				, current_timestamp()
+			)
+	</insert>
+
+
+	<!-- goodsno AUTO_INCREMENT. goodsno 컬럼이 autoIncrement로 DB에 설정되어 있을 경우 자동 증가하면서 insert -->	
+	<insert id="insertListUploadTest" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="SEQ">
+		INSERT INTO UPLOAD_TEST ( /* SampleMapper.insertUploadTestList excel Upload TEST insert */
+<!-- 					GOODS_NO, --> 
+					GOODS_NM
+					, SELL_YN
+					, GOODS_CD
+					, MAKER
+					, KEYWORD
+					, STR_PRICE
+					, SHORT_DESC
+					, COUPON
+					, COUPON_EA
+					, COUPON_USECNT
+					, COUPON_DATE
+					, REG_DT
+				) VALUES
+			<foreach collection="list" item="rowData" separator=",">
+				(
+<!-- 					#{rowData.GOODS_NM}, --> 
+					#{rowData.GOODS_NM}
+					, #{rowData.SELL_YN}
+					, #{rowData.GOODS_CD}
+					, #{rowData.MAKER}
+					, #{rowData.KEYWORD}
+					, #{rowData.STR_PRICE}
+					, #{rowData.SHORT_DESC}
+					, #{rowData.COUPON}
+					, #{rowData.COUPON_EA}
+					, #{rowData.COUPON_USECNT}
+					, #{rowData.COUPON_DATE}
+					, #{rowData.REG_DT}
+				)
+			</foreach>
+	</insert>
+		
+</mapper>

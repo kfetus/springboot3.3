@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+<Configuration>
+    <Properties>
+        <Property name="logPath">D:/workDir/hanjin/sts-4.24.0.RELEASE/logs</Property>
+        <Property name="logPattern">%5p %d{yyyy-MM-dd HH:mm:ss} [%t] [%c] %m%n</Property>
+        <Property name="serviceName">springboot</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="console">
+            <PatternLayout pattern="${logPattern}"/>
+        </Console>
+        <RollingFile name="file" append="true" fileName="${logPath}/${serviceName}.log" filePattern="${logPath}/${serviceName}.%d{yyyy-MM-dd}.%i.log.zip">
+            <PatternLayout pattern="${logPattern}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="5MB"/>
+                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+            </Policies>
+	        <DefaultRolloverStrategy>
+	            <Delete basePath="${logPath}" maxDepth="1">
+	                <IfFileName glob="${serviceName}.*.log"/>
+	                <IfLastModified age="15d"/>
+	            </Delete>
+	        </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <logger name="org.apache" level="info" additivity="false" >
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="org.springframework" level="info" additivity="false" >
+            <AppenderRef ref="console" />
+        </logger>
+        <logger name="demo" level="debug" additivity="true" >
+            <AppenderRef ref="console" />
+            <AppenderRef ref="file" />
+        </logger>
+		<logger name="jdbc.sqlonly" level="DEBUG" additivity="false"> 
+			<AppenderRef ref="console" />
+		</logger>
+		<logger name="jdbc.sqltiming" level="WARN" additivity="false"> 
+			<AppenderRef ref="console" />
+		</logger>
+		<Logger name="jdbc.resultsettable" level="DEBUG" additivity="false"> 
+			<AppenderRef ref="console" />
+		</Logger> 
+		<Logger name="jdbc.resultset" level="WARN" additivity="false"> 
+			<AppenderRef ref="console" />
+		</Logger> 
+		<Logger name="jdbc.audit" level="WARN" additivity="false"> 
+			<AppenderRef ref="console" />
+		</Logger> 
+		<Logger name="jdbc.connection" level="WARN" additivity="false"> 
+			<AppenderRef ref="console" />
+		</Logger> 
+
+        <Root level="debug"></Root>
+    </Loggers>    
+
+</Configuration>

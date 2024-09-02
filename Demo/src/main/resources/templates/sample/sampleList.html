@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.com">
+<head>
+	<meta charset="UTF-8">
+	<title>샘플</title>
+	 
+	<link th:href="@{/css/base.css}" rel="stylesheet" />
+	<script th:src="@{/js/comm/jquery-3.7.1.js}"></script>
+	<script th:src="@{/js/comm/siteComm.js}"></script>
+	<script>
+
+		const ajaxUpload = () => {
+
+			if ($("#srcVarcharCol").val() == '') {
+		        alert("varchar값 없어.");
+		        $("#srcVarcharCol").focus();
+		        return;
+		    }
+			if ($("#srcIntCol").val() == '') {
+		        alert("int값 없어.");
+		        $("#srcIntCol").focus();
+		        return;
+		    }
+			if ($("#srcDescrip").val() == '') {
+		        alert("내용이 없어.");
+		        $("#srcDescrip").focus();
+		        return;
+		    }
+			
+			var formData = new FormData();
+			var inputFile = $("#srcBlobData");
+			var files = inputFile[0].files;
+			
+			console.log(files[0]);
+			
+			if( !!files[0] ) {
+				var reg = /(.*?)\/(jpg|jpeg|png|bmp)$/;
+				if (!files[0].type.match(reg)) {
+		            alert("확장자는 이미지 확장자만 가능합니다.");
+		            return;
+		        }
+			}
+
+		    formData.append('varcharCol',$("#srcVarcharCol").val());
+		    formData.append('intCol',$("#srcIntCol").val());
+			formData.append('dateCol',$("#srcDateCol").val());
+			formData.append('charCol',$("#srcCharCol").val());
+		    formData.append('descrip',$("#srcDescrip").val());
+			formData.append('blobName',$("#srcBlobName").val());
+			if( !!files[0] ) {
+				formData.append("multiFiles", files[0]);
+			}
+			console.log(formData);
+			$.ajax({
+				type : 'post',
+				url: '/upload/ajaxSampleUpload.do',
+				processData : false,
+				contentType : false,
+				data : formData,
+				success : function(res){
+					if(res.RESCODE == '0000'){
+						alert('성공');
+					} else {
+						alert(res.RESMSG);
+						
+					}
+				},
+				error : function(request, status, error) {
+					console.log(error);
+				}
+			});
+		}
+		
+		$(function() {
+			//XSS 처리를 위한 방법. 서버에서 처리해서 th:text로 해도 되고. thymeleaf가 아닐경우 escape이 자동 처리 되지 않으면 아래와 같이 처리
+			$("[id^='descripTd']").each(function() {
+				console.log($(this).text());
+				$(this).text(changeXSS($(this).text()));
+			});
+			
+			console.log('document.onload()');
+		})
+
+		function fn_selectList(url) {
+			console.log('ddd');
+						
+			$.ajax({
+				type : 'post',
+				url : '/ajaxSampleList.do',
+				async : true,
+				dataType : 'json',
+//				dataType : 'text',
+				headers : {"Content-Type" : "application/json"},
+				data : JSON.stringify( {'charCol':$("#charCol").val(), 'descrip':$("#descrip").val()}),    
+				success : function(result) {
+					console.log(result);
+				},
+				error : function(request, status, error) { // 결과 에러 콜백함수        
+					console.log(error);
+				}
+			});
+		}
+		
+		function formSubmit() {
+//			$("#charCol").val('Y');
+			$('#mainForm').attr("onsubmit", "return true");
+			$("#mainForm").submit();
+			$('#mainForm').attr("onsubmit", "return false");
+			return false;
+		}
+		
+	</script>
+
+</head>
+<body>
+	<div>
+		<form action="/sampleList.do" method="post" id="mainForm" name="mainForm" onsubmit="return false">
+
+		<h1>sample 리스트 페이지</h1>
+		char col : <input type="text" name="charCol" id="charCol" th:value="${param.charCol}">
+		descrip : <input type="text" name="descrip" id="descrip" th:value="${param.descrip}">
+		<button type="button" onclick="javascript:formSubmit();"><span><strong>form조회</strong></span></button>
+		<button type="button" onclick="javascript:fn_selectList();"><span><strong>ajax조회</strong></span></button>
+
+		<table>
+			<colgroup>
+				<col width="5%"/>
+				<col width="20%"/>
+				<col width="10%"/>
+				<col width="15%"/>
+				<col width="10%"/>
+				<col width="10%"/>
+				<col width="15%"/>
+				<col width="15%"/>
+			</colgroup>
+			<tr>
+				<th align="center">pk</th>
+				<th align="center">varchar타입</th>
+				<th align="center">int타입</th>
+				<th align="center">date타입</th>
+				<th align="center">char타입</th>
+				<th align="center">파일명</th>
+				<th align="center">설명</th>
+				<th align="center">수정일</th>
+			</tr>
+			<tr th:each="rowData:${list}">
+				<td th:text="${rowData.PK}"></td>
+				<td th:text="${rowData.VARCHAR_COL}"></td>
+				<td th:text="${rowData.INT_COL}"></td>
+				<td th:text="${rowData.DATE_COL}"></td>
+				<td th:text="${rowData.CHAR_COL}"></td>
+				<td th:text="${rowData.BLOB_NAME}"></td>
+				<td th:text="${rowData.DESCRIP}" th:id="'descripTd'+${rowDataStat.index}"></td>
+				<!--/* td th:utext="${rowData.DESCRIP}"></td--><!-- XSS 관련 서버에서 컨버팅된 데이터가 저장되 있으면 이렇게 처리하면 escape 적용되서 보임. 서버에서 이미 스크립트를 변환하면 실행 되버리니 주의 */-->
+				<td th:text="${rowData.CNG_DT}"></td>
+			</tr>
+		</table>
+		</form>
+	</div>
+	<div style="padding: 10px;"></div>
+	<div>
+		<div>
+		    <div>
+				<label for="srcVarcharCol">VARCHAR타입값 : </label>
+				<input name="srcVarcharCol" id="srcVarcharCol" placeholder="입력" /><br>
+				<label for="srcItCol">INT타입값 : </label>
+				<input name="srcIntCol" id="srcIntCol" placeholder="입력" /><br>
+				<label for="srcDateCol">DATE타입값 : </label>
+				<input name="srcDateCol" id="srcDateCol" placeholder="입력" value="2024-08-30 15:06:25"/><br>
+				<label for="srcCharCol">CHAR타입값 : </label>
+				<input name="srcCharCol" id="srcCharCol" placeholder="입력" />
+		    </div>
+		    <div style="padding: 10px;"></div>
+		    <div>
+		        <label for="srcDescrip" style="vertical-align: top;">내용</label>
+		        <textarea name="srcDescrip" id="srcDescrip" cols="54" rows="10" placeholder="내용입력" ></textarea>
+		    </div>
+		    <div>
+				<label for="srcBlobName">파일저장명</label>
+				<input name="srcBlobName" id="srcBlobName" placeholder="입력" /><br>
+		        <label for="srcBlobData">첨부파일</label>
+		        <input type="file" id="srcBlobData"  />
+		    </div>
+		    
+		</div>
+		<div style="padding: 10px;"></div>
+		<div>
+			<button type="button" id="s1" onclick="javascript:ajaxUpload();"><span>ajax저장</span></button>
+		</div>
+	</div>
+	
+	
+	
+</body>
+</html>
