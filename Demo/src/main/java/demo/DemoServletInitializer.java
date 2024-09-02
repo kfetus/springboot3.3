@@ -11,11 +11,11 @@ public class DemoServletInitializer extends SpringBootServletInitializer {
 	
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		logger.debug("@@@@@@@@@@@@@ ServletInitializer"+application);
+		logger.debug("========== ServletInitializer"+application);
 		
 		
 //		ClassPathResource res = new ClassPathResource("mybatis-config.xml");
-//		logger.debug("@@@@@@@@@@@@@ ServletInitializer"+res.getPath());
+//		logger.debug("========== ServletInitializer"+res.getPath());
 		return application.sources(DemoApplication.class);
 	}
 

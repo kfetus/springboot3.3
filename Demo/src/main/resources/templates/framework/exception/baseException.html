@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.com">
+<head>
+<meta charset="UTF-8">
+<title>시스템 에러</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link th:href="@{/css/base.css}" rel="stylesheet" />
+<script th:src="@{/js/comm/jquery-3.7.1.js}"></script>
+<script th:src="@{/js/comm/siteComm.js}"></script>
+
+<script>
+	$(function() {
+		console.log('error.document.onload()');
+	})
+</script>
+
+</head>
+
+<body>
+	<div>
+		<div>
+			<h1>에러 안내 페이지</h1>
+			<a href="/">Back</a>
+		</div>
+		<div>
+			<h1>시스템 에러(business exception)</h1>
+			<p>관리자에게 문의해주세요.</p>
+			<a href="/">돌아가기</a> <br>
+			<p>에러내용넣기</p>
+			<br>
+			<br>
+			<br>
+		</div>
+		<div>
+			<h4>메인</h4>
+		</div>
+	</div>
+</body>
+</html>

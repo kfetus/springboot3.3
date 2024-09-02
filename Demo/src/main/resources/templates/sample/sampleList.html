@@ -95,8 +95,9 @@
 				success : function(result) {
 					console.log(result);
 				},
-				error : function(request, status, error) { // 결과 에러 콜백함수        
-					console.log(error);
+				error : function(res) {
+					console.log(res.status);
+					console.log(res.responseJSON);
 				}
 			});
 		}

@@ -1,5 +1,7 @@
 package demo.framework;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -12,9 +14,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 //import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.multipart.support.MultipartFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import demo.framework.exception.DemoExceptionResolver;
 import demo.framework.filter.HjXSSFilter;
 import demo.framework.interceptor.HjInterceptor;
 
@@ -82,6 +86,11 @@ public class DemoWebConfig implements WebMvcConfigurer {
         ssfBean.setConfigLocation(new ClassPathResource("mybatis-config.xml"));
         ssfBean.getObject().getConfiguration().setMapUnderscoreToCamelCase(true);
         return ssfBean.getObject();
-    }    
+    }
+
+	@Override
+	public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
+		resolvers.add(new DemoExceptionResolver());
+	}    
     
 }

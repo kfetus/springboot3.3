@@ -18,7 +18,7 @@ public class SampleServiceImpl {
 	@Autowired
 	private SampleMapper sampleMapper;
 	
-	public List<HashMap<String,String>> selectList(HashMap<String,Object> map) throws Exception {
+	public List<HashMap<String,String>> selectList(HashMap<String,String> map) throws Exception {
 		List<HashMap<String,String>> result = sampleMapper.selectList(map);
 		logger.debug("@@@@@@@@@@@@@ SampleServiceImpl.selectList result=" + result);
 		return result;

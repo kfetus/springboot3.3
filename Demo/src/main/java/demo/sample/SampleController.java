@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import demo.framework.exception.BaseException;
 //import demo.common.StringUtil;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -47,12 +49,36 @@ public class SampleController {
 		return model;
 	}
 
-
-	@RequestMapping(value = "/sampleList.do")
-	public ModelAndView sampleList(@RequestParam HashMap<String,Object> map) throws Exception {
-		logger.debug("########## sampleList  #############"+map);
+	/**
+	 * url에 들어온 url 그대로 view로 매핑. 파라미터들 그대로 전달
+	 * @param map
+	 * @param subPath
+	 * @param viewName
+	 * @return
+	 * @throws Exception 
+	 */
+	@RequestMapping("/urlToView/{subPath}/{viewName}")
+	public ModelAndView subPathUrlToHtml( @RequestParam HashMap<String,String> map, @PathVariable("subPath") String subPath,
+			@PathVariable("viewName") String viewName) throws Exception {
+		logger.debug("@@@@@@@@@@ subPathUrlToHtml  @@@@@@@@@@"+map);
+		ModelAndView mv = new ModelAndView();
+		String viewFileName = viewName;
+		if(viewName.indexOf(".") != -1) {
+			viewFileName = viewName.substring(0, viewName.indexOf("."));
+		}
+		if(subPath.equals("exception")) {
+			subPath = "framework/"+subPath;
+		}
+		mv.setViewName(subPath+"/"+viewFileName);
+		return mv;
+	}
+	
+	@RequestMapping("/sampleList.do")
+	public ModelAndView sampleList(@RequestParam HashMap<String,String> map) throws Exception {
+		
+		logger.debug("@@@@@@@@@@ sampleList  @@@@@@@@@@"+map);
 		List<HashMap<String,String>> list = sampleService.selectList(map);
-		logger.debug("########## sampleList  #############"+list);
+		logger.debug("@@@@@@@@@@ sampleList  @@@@@@@@@@"+list);
 
 /*		절대로 서버에서 바꿔서 리턴하면 안됨. 변경해서 리턴하면 컴파일된 jsp를 브라우저는 그대로 실행하게 되므로 XSS에 취약해짐. 필요하면 클라이언트에서 해당 값 replace해야 함(EX:에디터 내용들)
  * 		th:text 로 한다면 기본적으로 escape 을 thymeleaf가 제공하므로 서버에서 변경해서 내려도 됨. XSS가 적용된 상태로 내리면 thymeleaf의 th:utext로 하면 escaping을 해서 보여줌 
@@ -65,21 +91,26 @@ public class SampleController {
 			row.put("DESCRIP", bodyText);
 		}
 */
-
+		if( "Y".equals(map.get("charCol")) ) {
+			throw new BaseException("TESTTTTTT","9999");
+		}
 		
 		ModelAndView mv = new ModelAndView();
-		
 		mv.addObject("list", list );
-		
 		mv.setViewName("sample/sampleList");
 		return mv;
+
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = "/ajaxSampleList.do")
-	public Map<String, Object> ajaxSampleList(@RequestBody HashMap<String, Object> map) throws Exception {
+	public Map<String, Object> ajaxSampleList(@RequestBody HashMap<String, String> map) throws Exception {
 		logger.debug("@@@@@@@@@@ ajaxSampleList 시작=" + map);
 		Map<String, Object> retMap = new HashMap<String, Object>();
+		
+		if( "Y".equals(map.get("charCol")) ) {
+			throw new BaseException("TESTTTTTT","9999");
+		}
 		
 		List<HashMap<String,String>> list = sampleService.selectList(map);
 		
@@ -120,4 +151,5 @@ public class SampleController {
 		logger.debug("@@@@@@@@@@@ ajaxSampleUpload 종료" + retMap);
 		return retMap;
 	}	
+
 }
