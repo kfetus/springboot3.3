@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.com">
+<head>
+<meta charset="UTF-8">
+<title>클래스 인포</title>
+
+<link th:href="@{/css/base.css}" rel="stylesheet" />
+<script th:src="@{/js/comm/jquery-3.7.1.js}"></script>
+<script th:src="@{/js/comm/siteComm.js}"></script>
+<script>
+	$(function() {
+		console.log('document.onload()');
+	})
+
+	function fn_selectList(url) {
+		console.log('ddd');
+
+		$.ajax({
+			type : 'post',
+			url : '/ajaxClassInfo.do',
+			async : true,
+			dataType : 'json',
+			headers : {	"Content-Type" : "application/json"	},
+			data : JSON.stringify({
+				'className' : $("#className").val(),
+			}),
+			success : function(result) {
+				console.log(result);
+				$("#resultClass").text(JSON.stringify(result.RESULT_MAP));
+			},
+			error : function(res) {
+				console.log(res.status);
+				console.log(res.responseJSON);
+			}
+		});
+	}
+
+</script>
+
+</head>
+<body>
+	<div>
+		<p class="c_title">Nextree Classloader Information</p>
+		Class Name: <input type="text" id="className" name="className" size="100" />
+		<button type="button" onclick="javascript:fn_selectList();"><span><strong>ajax조회</strong></span></button>
+		<p><span id="resultClass"></span></p>
+	</div>
+</body>
+</html>

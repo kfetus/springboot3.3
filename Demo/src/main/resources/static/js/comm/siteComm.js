@@ -6,38 +6,56 @@
 		//로딩바 숨김
 		$(".spinner-container").hide();
 	});
+	//JWT 토큰 사용시 키값
 	const G_TOKEN_KEY = 'AccessKeyJwt';
+	
+	let g_formSubmitState = false;
+	function gfn_submit(formId) {
+		let submitForm = $('#'+formId);
+		if(!g_formSubmitState) {
+			g_formSubmitState = true;
+			setTimeout(function() {
+				submitForm.attr("onsubmit", "return true");
+				submitForm.submit();
+				submitForm.attr("onsubmit", "return false");
+			},1000);
+		} else {
+			alert('이미 submit 되었습니다.');
+		}
+	}
+
+	
 	/**
 	 * LocalStorage 관리
 	 */
-	function fn_SetLocalStorage(key, value){
+	function gfn_SetLocalStorage(key, value){
 		localStorage.setItem(key, value);
 	}
 	
-	function fn_GetLocalStorage(key){
+	function gfn_GetLocalStorage(key){
 		return localStorage.getItem(key);
 	}
 	
-	function fn_DelLocalStorage(key){
+	function gfn_DelLocalStorage(key){
 		 localStorage.removeItem(key);
 	}
 	
 	/**
 	 * SessionStorage 관리
 	 */
-	function fn_SetSessionStorage(key, value){
+	function gfn_SetSessionStorage(key, value){
 		sessionStorage.setItem(key, value);
 	}
 	
-	function fn_GetSessionStorage(key){
+	function gfn_GetSessionStorage(key){
 		return sessionStorage.getItem(key);
 	}
 	
-	function fn_DelSessionStorage(key){
+	function gfn_DelSessionStorage(key){
 		 sessionStorage.removeItem(key);
 	}
 
-	function fn_getTodayYYYYMMDD() {
+	function gfn_getTodayYYYYMMDD() {
 		let today = new Date(); 
 		let year = today.getFullYear();
 		let month = (today.getMonth() + 1).toString().padStart(2, '0');
@@ -45,7 +63,7 @@
 		return `${year}${month}${day}`;
 	}
 
-	function fn_getTodayYYYY_MM_DD() {
+	function gfn_getTodayYYYY_MM_DD() {
 		let today = new Date(); 
 		let year = today.getFullYear();
 		let month = (today.getMonth() + 1).toString().padStart(2, '0');
@@ -53,13 +71,17 @@
 		return `${year}-${month}-${day}`;
 	}
 
-	const changeXSS =(str) => {
+	/**
+	 * XSS 관련 스크립트 원복 함수
+	 * @param str : 원복할 String
+	 */
+	const gfn_changeXSS =(str) => {
 	    return str.replaceAll('&lt;','<').replaceAll('&gt;', '>').replaceAll('&#40;', '(').replaceAll('&#41;', ')').replaceAll('&apos;', '\'').replaceAll('&amp;', '&');
 	}
 
 
 	//nowPage가 시작. 최대 5개까지만 보여주기.
-	function fn_makePaging(nowPage,totalCnt,pagePerCnt,divName,fn) {
+	function gfn_makePaging(nowPage,totalCnt,pagePerCnt,divName,fn) {
 //			$("#paging").empty();
 		$('#'+divName).empty();
 		if(totalCnt > 0) {

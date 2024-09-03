@@ -62,7 +62,6 @@
 						alert('성공');
 					} else {
 						alert(res.RESMSG);
-						
 					}
 				},
 				error : function(request, status, error) {
@@ -75,7 +74,7 @@
 			//XSS 처리를 위한 방법. 서버에서 처리해서 th:text로 해도 되고. thymeleaf가 아닐경우 escape이 자동 처리 되지 않으면 아래와 같이 처리
 			$("[id^='descripTd']").each(function() {
 				console.log($(this).text());
-				$(this).text(changeXSS($(this).text()));
+				$(this).text(gfn_changeXSS($(this).text()));
 			});
 			
 			console.log('document.onload()');
@@ -102,14 +101,6 @@
 			});
 		}
 		
-		function formSubmit() {
-//			$("#charCol").val('Y');
-			$('#mainForm').attr("onsubmit", "return true");
-			$("#mainForm").submit();
-			$('#mainForm').attr("onsubmit", "return false");
-			return false;
-		}
-		
 	</script>
 
 </head>
@@ -120,7 +111,7 @@
 		<h1>sample 리스트 페이지</h1>
 		char col : <input type="text" name="charCol" id="charCol" th:value="${param.charCol}">
 		descrip : <input type="text" name="descrip" id="descrip" th:value="${param.descrip}">
-		<button type="button" onclick="javascript:formSubmit();"><span><strong>form조회</strong></span></button>
+		<button type="button" onclick="javascript:gfn_submit('mainForm');"><span><strong>form조회</strong></span></button>
 		<button type="button" onclick="javascript:fn_selectList();"><span><strong>ajax조회</strong></span></button>
 
 		<table>

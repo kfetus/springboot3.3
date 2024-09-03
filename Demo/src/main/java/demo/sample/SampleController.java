@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import demo.framework.exception.BaseException;
+import demo.common.util.ClassLoaderInfo;
 //import demo.common.StringUtil;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -58,7 +59,8 @@ public class SampleController {
 	 * @throws Exception 
 	 */
 	@RequestMapping("/urlToView/{subPath}/{viewName}")
-	public ModelAndView subPathUrlToHtml( @RequestParam HashMap<String,String> map, @PathVariable("subPath") String subPath,
+	public ModelAndView subPathUrlToHtml( @RequestParam HashMap<String,String> map,
+			@PathVariable("subPath") String subPath,
 			@PathVariable("viewName") String viewName) throws Exception {
 		logger.debug("@@@@@@@@@@ subPathUrlToHtml  @@@@@@@@@@"+map);
 		ModelAndView mv = new ModelAndView();
@@ -68,6 +70,10 @@ public class SampleController {
 		}
 		if(subPath.equals("exception")) {
 			subPath = "framework/"+subPath;
+			HashMap<String, String> exceptionRetMap = new HashMap<>();
+			exceptionRetMap.put("CODE", "9999");
+			exceptionRetMap.put("MSG", "에러 처리 샘플 페이지 보기");
+			mv.addObject("errorInfo", exceptionRetMap );
 		}
 		mv.setViewName(subPath+"/"+viewFileName);
 		return mv;
@@ -91,9 +97,10 @@ public class SampleController {
 			row.put("DESCRIP", bodyText);
 		}
 */
-		if( "Y".equals(map.get("charCol")) ) {
-			throw new BaseException("TESTTTTTT","9999");
-		}
+
+//		if( "Y".equals(map.get("charCol")) ) {
+//			throw new BaseException("TESTTTTTT","9999");
+//		}
 		
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("list", list );
@@ -108,9 +115,9 @@ public class SampleController {
 		logger.debug("@@@@@@@@@@ ajaxSampleList 시작=" + map);
 		Map<String, Object> retMap = new HashMap<String, Object>();
 		
-		if( "Y".equals(map.get("charCol")) ) {
-			throw new BaseException("TESTTTTTT","9999");
-		}
+//		if( "Y".equals(map.get("charCol")) ) {
+//			throw new BaseException("TESTTTTTT","9999");
+//		}
 		
 		List<HashMap<String,String>> list = sampleService.selectList(map);
 		
@@ -122,10 +129,47 @@ public class SampleController {
 		logger.debug("@@@@@@@@@@@ ajaxSampleList 종료" + retMap);
 		return retMap;
 	}
+
 	
 	@ResponseBody
+	@RequestMapping(value = "/ajaxClassInfo.do")
+	public Map<String, Object> ajaxClassInfo(@RequestBody HashMap<String, String> map) throws Exception {
+		logger.debug("@@@@@@@@@@ ajaxClassInfo 시작=" + map);
+		Map<String, Object> retMap = new HashMap<String, Object>();
+
+		String className = map.get("className");
+		ClassLoaderInfo cl = new ClassLoaderInfo();
+
+		Map<String,Object> classInfo = null;
+		if(StringUtils.hasText(className)) {
+			classInfo = cl.getLoadingClassInfo(className);
+		}
+
+		retMap.put("RESCODE", "0000");
+		retMap.put("RESMSG", "정상적으로 처리되었습니다");
+		retMap.put("RESULT_MAP", classInfo);
+
+		logger.debug("@@@@@@@@@@@ ajaxClassInfo 종료" + retMap);
+		return retMap;
+	}	
+	
+	/**
+	 * ajax 파일 업로드 샘플
+	 * @param varcharCol
+	 * @param intCol
+	 * @param dateCol
+	 * @param charCol
+	 * @param descrip
+	 * @param blobName
+	 * @param multiFiles
+	 * @param req
+	 * @return
+	 * @throws Exception
+	 */
+	@ResponseBody
 	@PostMapping(value = "/upload/ajaxSampleUpload.do")
-	public Map<String, Object> ajaxSampleUpload(@RequestParam(value="varcharCol", required=false) String varcharCol, @RequestParam(value="intCol", required=false) String intCol, 
+	public Map<String, Object> ajaxSampleUpload(@RequestParam(value="varcharCol", required=false) String varcharCol, 
+			@RequestParam(value="intCol", required=false) String intCol, 
 			@RequestParam(value="dateCol", required=false) String dateCol, @RequestParam(value="charCol", required=false) String charCol, 
 			@RequestParam(value="descrip", required=false) String descrip, @RequestParam(value="blobName", required=false) String blobName, 
 			@RequestPart(value="multiFiles",required = false)  MultipartFile multiFiles, HttpServletRequest req) throws Exception {

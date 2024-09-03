@@ -22,7 +22,6 @@ public class DemoExceptionResolver implements HandlerExceptionResolver {
 	public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
 			Exception reqException) {
 		logger.debug("==========DemoExceptionResolver=" + handler.getClass().getName());
-		logger.debug("==========DemoExceptionResolver=" + reqException);
 
 		HashMap<String, String> exceptionRetMap = new HashMap<>();
 
@@ -32,6 +31,7 @@ public class DemoExceptionResolver implements HandlerExceptionResolver {
 			exceptionRetMap.put("CODE", "9999");
 		}
 		exceptionRetMap.put("MSG", reqException.getMessage());
+		reqException.printStackTrace();
 		
 		String reqAccept = request.getHeader("accept");
 		logger.debug("==========req accept=" + reqAccept);
