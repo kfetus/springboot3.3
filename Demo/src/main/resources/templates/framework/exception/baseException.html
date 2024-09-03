@@ -23,16 +23,14 @@
 			<a href="/">Back</a>
 		</div>
 		<div>
-			<h1>시스템 에러(business exception)</h1>
+			<h1>시스템 에러(baseException)</h1>
 			<p>관리자에게 문의해주세요.</p>
+			내용:<span th:text="${errorInfo.MSG}"></span><br>
+			코드:<span th:text="${errorInfo.CODE}"></span><br>
 			<a href="/">돌아가기</a> <br>
-			<p>에러내용넣기</p>
 			<br>
 			<br>
 			<br>
-		</div>
-		<div>
-			<h4>메인</h4>
 		</div>
 	</div>
 </body>

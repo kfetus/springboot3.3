@@ -58,8 +58,8 @@ public class SampleController {
 	 * @throws Exception 
 	 */
 	@RequestMapping("/urlToView/{subPath}/{viewName}")
-	public ModelAndView subPathUrlToHtml( @RequestParam HashMap<String,String> map, @PathVariable("subPath") String subPath,
-			@PathVariable("viewName") String viewName) throws Exception {
+	public ModelAndView subPathUrlToHtml( @RequestParam HashMap<String,String> map, @PathVariable String subPath,
+			@PathVariable String viewName) throws Exception {
 		logger.debug("@@@@@@@@@@ subPathUrlToHtml  @@@@@@@@@@"+map);
 		ModelAndView mv = new ModelAndView();
 		String viewFileName = viewName;
@@ -103,7 +103,7 @@ public class SampleController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/ajaxSampleList.do")
+	@PostMapping("/ajaxSampleList.do")
 	public Map<String, Object> ajaxSampleList(@RequestBody HashMap<String, String> map) throws Exception {
 		logger.debug("@@@@@@@@@@ ajaxSampleList 시작=" + map);
 		Map<String, Object> retMap = new HashMap<String, Object>();
@@ -125,9 +125,9 @@ public class SampleController {
 	
 	@ResponseBody
 	@PostMapping(value = "/upload/ajaxSampleUpload.do")
-	public Map<String, Object> ajaxSampleUpload(@RequestParam(value="varcharCol", required=false) String varcharCol, @RequestParam(value="intCol", required=false) String intCol, 
-			@RequestParam(value="dateCol", required=false) String dateCol, @RequestParam(value="charCol", required=false) String charCol, 
-			@RequestParam(value="descrip", required=false) String descrip, @RequestParam(value="blobName", required=false) String blobName, 
+	public Map<String, Object> ajaxSampleUpload(@RequestParam(required=false) String varcharCol, @RequestParam(required=false) String intCol, 
+			@RequestParam(required=false) String dateCol, @RequestParam(required=false) String charCol, 
+			@RequestParam(required=false) String descrip, @RequestParam(required=false) String blobName, 
 			@RequestPart(value="multiFiles",required = false)  MultipartFile multiFiles, HttpServletRequest req) throws Exception {
 		logger.debug("@@@@@@@@@@@ ajaxSampleUpload 시작 @@@@@@@@@@@");
 		Map<String, Object> retMap = new HashMap<String, Object>();

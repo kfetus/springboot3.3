@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.http.MediaType;
 
 import jakarta.servlet.ReadListener;
 import jakarta.servlet.ServletInputStream;
@@ -35,7 +36,7 @@ public class HTMLTagFilterRequestWrapper  extends HttpServletRequestWrapper {
 			logger.debug("========== HTMLTagFilterRequestWrapper reqContentType="+reqContentType);
 			
 			if( (reqAccept != null && reqContentType != null) && 
-					(reqAccept.indexOf("application/json") > -1 || reqContentType.indexOf("application/json") > -1 || reqContentType.indexOf("multipart/form-data") > -1 ) ) {
+					(reqAccept.indexOf(MediaType.APPLICATION_JSON_VALUE) > -1 || reqContentType.indexOf(MediaType.APPLICATION_JSON_VALUE) > -1 || reqContentType.indexOf(MediaType.MULTIPART_FORM_DATA_VALUE) > -1 ) ) {
 //				logger.debug("========== HTMLTagFilterRequestWrapper InputStream 가로채기");		
 				InputStream is = request.getInputStream();
 				this.reqStreamData = handleXSS(IOUtils.toByteArray(is));
