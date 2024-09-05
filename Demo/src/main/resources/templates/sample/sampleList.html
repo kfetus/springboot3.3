@@ -52,8 +52,8 @@
 			}
 			console.log(formData);
 			$.ajax({
-				type : 'post',
-				url: '/upload/ajaxSampleUpload.do',
+				type : "POST",
+				url: "/upload/ajaxSampleUpload.do",
 				processData : false,
 				contentType : false,
 				data : formData,
@@ -84,8 +84,8 @@
 			console.log('ddd');
 						
 			$.ajax({
-				type : 'post',
-				url : '/ajaxSampleList.do',
+				type : "POST",
+				url : "/ajaxSampleList.do",
 				async : true,
 				dataType : 'json',
 //				dataType : 'text',

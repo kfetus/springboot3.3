@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.com">
+<head>
+<meta charset="UTF-8">
+<title>샘플</title>
+
+<link th:href="@{/css/base.css}" rel="stylesheet" />
+<script th:src="@{/js/comm/jquery-3.7.1.js}"></script>
+<script th:src="@{/js/comm/siteComm.js}"></script>
+<script>
+
+	$(function() {
+		
+		window.requestAnimFrame = (function(callback) {
+			return window.requestAnimationFrame
+					|| window.webkitRequestAnimationFrame
+					|| window.mozRequestAnimationFrame
+					|| window.oRequestAnimationFrame
+					|| window.msRequestAnimaitonFrame || function(callback) {
+						window.setTimeout(callback, 1000 / 60);
+					};
+		})();
+
+		var canvasSig = document.getElementById("sig-canvas");
+		var ctx = canvasSig.getContext("2d");
+		ctx.strokeStyle = "#222222";
+		ctx.lineWidth = 2;
+
+		var drawing = false;
+		var mousePos = {
+			x : 0,
+			y : 0
+		};
+		var lastPos = mousePos;
+
+		canvasSig.addEventListener("mousedown", function(e) {
+			drawing = true;
+			lastPos = getMousePos(canvasSig, e);
+		}, false);
+
+		canvasSig.addEventListener("mouseup", function(e) {
+			drawing = false;
+		}, false);
+
+		canvasSig.addEventListener("mousemove", function(e) {
+			mousePos = getMousePos(canvasSig, e);
+		}, false);
+
+		// Add touch event support for mobile
+		canvasSig.addEventListener("touchstart", function(e) {
+
+		}, false);
+
+		canvasSig.addEventListener("touchmove", function(e) {
+			var touch = e.touches[0];
+			var me = new MouseEvent("mousemove", {
+				clientX : touch.clientX,
+				clientY : touch.clientY
+			});
+			canvasSig.dispatchEvent(me);
+		}, false);
+
+		canvasSig.addEventListener("touchstart", function(e) {
+			mousePos = getTouchPos(canvasSig, e);
+			var touch = e.touches[0];
+			var me = new MouseEvent("mousedown", {
+				clientX : touch.clientX,
+				clientY : touch.clientY
+			});
+			canvasSig.dispatchEvent(me);
+		}, false);
+
+		canvasSig.addEventListener("touchend", function(e) {
+			var me = new MouseEvent("mouseup", {});
+			canvasSig.dispatchEvent(me);
+		}, false);
+
+		function getMousePos(canvasDom, mouseEvent) {
+			var rect = canvasDom.getBoundingClientRect();
+			return {
+				x : mouseEvent.clientX - rect.left,
+				y : mouseEvent.clientY - rect.top
+			}
+		}
+
+		function getTouchPos(canvasDom, touchEvent) {
+			var rect = canvasDom.getBoundingClientRect();
+			return {
+				x : touchEvent.touches[0].clientX - rect.left,
+				y : touchEvent.touches[0].clientY - rect.top
+			}
+		}
+
+		function renderCanvas() {
+			if (drawing) {
+				ctx.moveTo(lastPos.x, lastPos.y);
+				ctx.lineTo(mousePos.x, mousePos.y);
+				ctx.stroke();
+				lastPos = mousePos;
+			}
+		}
+
+		// Prevent scrolling when touching the canvas
+		document.body.addEventListener("touchstart", function(e) {
+			if (e.target == canvasSig) {
+				e.preventDefault();
+			}
+		}, false);
+		document.body.addEventListener("touchend", function(e) {
+			if (e.target == canvasSig) {
+				e.preventDefault();
+			}
+		}, false);
+		document.body.addEventListener("touchmove", function(e) {
+			if (e.target == canvasSig) {
+				e.preventDefault();
+			}
+		}, false);
+
+		(function drawLoop() {
+			requestAnimFrame(drawLoop);
+			renderCanvas();
+		})();
+
+		function clearCanvas() {
+			canvasSig.width = canvasSig.width;
+		}
+
+
+		$("#sig-clearBtn").on("click", function() {
+			clearCanvas();
+			$("#sig-dataUrl").val("Data URL for your signature will go here!");
+			$("#sig-image").attr("src", "");
+		});		
+
+		$("#sig-submitBtn").on("click", function() {
+			var dataUrl = canvasSig.toDataURL();
+			$("#sig-dataUrl").val(dataUrl);
+			$("#sig-image").attr("src", dataUrl);
+
+			$.ajax({
+				type : "POST",
+				url : "/sign/canvasInsert.do",
+				async : true,
+				dataType : 'json',
+				headers : {"Content-Type" : "application/json"},
+				data : JSON.stringify({
+					"regId" : "sub12",
+					"signData" : dataUrl
+				}),
+				success : function(result) {
+					console.log(result);
+				},
+				error : function(res) {
+					console.log(res.status);
+					console.log(res.responseJSON);
+				}
+			});
+		});		
+
+	});
+</script>
+
+</head>
+<body>
+	<section>
+		<div style="height: 200px; width: 400px; border: 1px solid;">
+			<canvas id="sig-canvas" width="400" height="200"></canvas>
+		</div>
+		<div class="row">
+			<button class="btn" id="sig-submitBtn">Submit Signature</button>
+			<button class="btn" id="sig-clearBtn">Clear Signature</button>
+		</div>
+
+		<div class="col-md-12">
+			<textarea id="sig-dataUrl" class="form-control" rows="10">Data URL for your signature will go here!</textarea>
+		</div>
+
+		<div class="col-md-12">
+			<img id="sig-image" src="" alt="Your signature will go here!" />
+		</div>
+
+	</section>
+</body>
+</html>

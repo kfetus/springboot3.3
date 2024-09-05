@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="demo.sample.sign.SignByCanvasMapper">
+
+<!-- 
+CREATE TABLE SIGNDATA_SAVE (
+	SIGN_KEY VARCHAR2(20) NOT NULL, 
+	SIGN_DATA CLOB, 
+	REG_ID VARCHAR2(20) DEFAULT 'SYSTEM', 
+	REG_DT DATE DEFAULT SYSDATE, 
+	CNG_DT DATE
+);
+
+ALTER TABLE SIGNDATA_SAVE ADD CONSTRAINT PK_SIGNDATA_SAVE PRIMARY KEY (SIGN_KEY);
+
+CREATE TABLE SIGNDATA_SAVE (
+	SIGN_KEY VARCHAR(20) NOT NULL COMMENT 'PK',
+	SIGN_DATA TEXT COMMENT 'CANVAS 텍스트 데이타(오라클 CLOB)',
+	REG_ID VARCHAR(20) DEFAULT 'SYSTEM' COMMENT '등록자',
+	REG_DT DATETIME NULL DEFAULT CURRENT_TIMESTAMP() COMMENT '등록일',
+	CNG_DT DATETIME NULL DEFAULT CURRENT_TIMESTAMP() COMMENT '수정일',
+	PRIMARY KEY (`SIGN_KEY`) USING BTREE
+)
+COMMENT='canvas sign 테스트 TABLE'
+COLLATE='utf8mb4_general_ci'
+ENGINE=InnoDB
+;
+
+ -->
+	<select id="selectSignList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT SIGN_KEY /* SignByCanvasMapper.selectSignList 목록 조회 */
+			  , SIGN_DATA
+			  , REG_ID
+			  , REG_DT
+			  , CNG_DT
+		  FROM SIGNDATA_SAVE
+		<where>
+			<if test="signKey != null and signKey != '' ">AND SIGN_KEY LIKE CONCAT('%',#{signKey},'%') </if>
+		</where>
+	</select>
+   
+	<insert id="insertSign" parameterType="java.util.HashMap">
+		INSERT INTO SIGNDATA_SAVE ( /* SignByCanvasMapper.insertSign */
+				SIGN_KEY
+				, SIGN_DATA
+				, REG_ID
+				, REG_DT
+				, CNG_DT
+		)
+		VALUES(
+				#{signKey}
+				, #{signData}
+				, #{regId}
+				, current_timestamp()
+				, current_timestamp()
+		)
+	</insert>    
+
+	<update id="updateSign" parameterType="java.util.HashMap">
+		UPDATE SIGNDATA_SAVE /* SignByCanvasMapper.updateSign */
+			SET	SIGN_DATA = #{signData},
+				REG_ID = #{regId},
+				CNG_DT   = current_timestamp()
+		  WHERE SIGN_KEY = #{signKey}
+	</update>
+		
+</mapper>
