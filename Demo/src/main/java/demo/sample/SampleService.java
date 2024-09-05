@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public class SampleServiceImpl {
+public class SampleService {
 
 	private final Logger logger = LogManager.getLogger(SampleController.class);
 
@@ -20,7 +20,7 @@ public class SampleServiceImpl {
 	
 	public List<HashMap<String,String>> selectList(HashMap<String,String> map) throws Exception {
 		List<HashMap<String,String>> result = sampleMapper.selectList(map);
-		logger.debug("@@@@@@@@@@@@@ SampleServiceImpl.selectList result=" + result);
+		logger.debug("@@@@@@@@@@@@@ SampleService.selectList result=" + result);
 		return result;
 	}
 

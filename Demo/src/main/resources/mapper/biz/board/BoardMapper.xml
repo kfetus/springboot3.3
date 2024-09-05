@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="demo.biz.board.BoardMapper">
+
+   <select id="selectBoardListCnt" parameterType="java.util.HashMap" resultType="int">
+		SELECT /* BoardMapper.selectBoardListCnt 게시판 목록 갯수 조회 */
+				COUNT(A.SEQ) AS TOTAL_CNT
+		  FROM MAIN_BOARD A 
+		 WHERE A.ORIGIN_BOARD_SEQ IS NULL 
+		<where>
+			<if test="seq != null and seq != '' ">AND A.SEQ = #{seq}</if>
+			<if test="title != null and title != '' ">AND A.TITLE LIKE CONCAT('%',#{title},'%')</if>
+			<if test="category != null and category != '' ">AND A.CATEGORY = #{category}</if>
+		</where>
+    </select>
+
+
+   <select id="selectBoardList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT /* BoardMapper.selectBoardList 게시판 목록 조회 */
+				A.SEQ
+				, A.CATEGORY
+				, B.CODE_NAME
+				, A.TITLE
+				, A.BODY_TEXT
+				, A.ORIGIN_BOARD_SEQ
+				, C.COMMENT_CNT
+				, A.ORDER_NUM
+				, A.CNG_USER_NO
+				, DATE_FORMAT(A.REG_DT, '%Y-%m-%d %H:%i:%s') REG_DT
+				, DATE_FORMAT(A.REG_DT, '%Y-%m-%d') REG_DT2
+				, DATE_FORMAT(A.CNG_DT, '%Y-%m-%d') CNG_DT
+		  FROM MAIN_BOARD A INNER JOIN CODE B ON (A.CATEGORY = B.CODE AND B.CODE_TYPE = 'BOARD') 
+		  		 LEFT OUTER JOIN (SELECT COUNT(ORIGIN_BOARD_SEQ) AS COMMENT_CNT 
+								 		, ORIGIN_BOARD_SEQ
+									FROM main_board
+								   WHERE ORIGIN_BOARD_SEQ IS NOT NULL
+								GROUP BY ORIGIN_BOARD_SEQ) AS C ON A.SEQ = C.ORIGIN_BOARD_SEQ
+		  WHERE A.ORIGIN_BOARD_SEQ IS NULL 
+			<if test="seq != null and seq != '' ">AND A.SEQ = #{seq}</if>
+			<if test="title != null and title != '' ">AND A.TITLE LIKE CONCAT('%',#{title},'%')</if>
+			<if test="category != null and category != '' ">AND A.CATEGORY = #{category}</if>
+		ORDER BY SEQ ASC
+		LIMIT #{pageListCnt} OFFSET #{startIdx}
+    </select>
+
+	<select id="selectBoardOne" parameterType="String" resultType="java.util.HashMap">
+		SELECT /* BoardMapper.selectBoardOne 게시판 상세 조회 */
+				A.SEQ
+				, A.CATEGORY
+				, B.CODE_NAME
+				, A.TITLE
+				, A.BODY_TEXT
+				, A.ORIGIN_BOARD_SEQ
+				, A.ORDER_NUM
+				, A.CNG_USER_NO
+				, DATE_FORMAT(A.REG_DT, '%Y-%m-%d') REG_DT
+				, A.CNG_DT
+				, CONCAT(C.FILE_NAME, '.', C.FILE_EXTENSION) AS FILE_NAME
+				, C.FILE_SEQ
+		  FROM MAIN_BOARD A INNER JOIN CODE B ON A.CATEGORY = B.CODE LEFT JOIN BOARD_ADD_FILE C ON A.SEQ = C.SEQ
+		 WHERE A.SEQ = #{seq}
+		   AND B.CODE_TYPE = 'BOARD'
+	</select>
+
+	<select id="selectBoardOneCommemtList" parameterType="String" resultType="java.util.HashMap">
+		SELECT /* BoardMapper.selectBoardOneCommemtList 게시판 상세 댓글 조회 */
+				SEQ
+				, CATEGORY
+				, TITLE
+				, BODY_TEXT
+		  FROM MAIN_BOARD
+		 WHERE ORIGIN_BOARD_SEQ = #{seq}
+	</select>
+
+    
+	<select id="selectBoardFileOne" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+			SELECT CONCAT(FILE_NAME, '.', FILE_EXTENSION) AS FILE_NAME 
+				   , FILE_EXTENSION
+				   , FILE_DATA
+			  FROM BOARD_ADD_FILE
+			 WHERE SEQ = #{seq}
+			   AND FILE_SEQ = #{fileSeq}
+	</select>
+    
+	<insert id="insertBoardOne" parameterType="java.util.HashMap">
+		<selectKey resultType="int" keyProperty="boardSeq" keyColumn="SEQ" order="BEFORE">
+			SELECT nextval(BOARD_SEQ)
+		</selectKey>
+
+		INSERT /* BoardMapper.insertBoardOne 게시판 Insert */
+		INTO MAIN_BOARD(
+			SEQ
+			, CATEGORY
+			, TITLE
+			, BODY_TEXT
+			, ORIGIN_BOARD_SEQ
+			, ORDER_NUM
+			, CNG_USER_NO
+			, REG_DT
+			, CNG_DT
+			)
+		VALUES(
+			#{boardSeq}
+			, #{category}
+			, #{title}
+			, #{bodyText}
+			, #{originBoardSeq}
+			, #{orderNum}
+			, #{userNo}
+			, CURRENT_TIMESTAMP()
+			, CURRENT_TIMESTAMP()
+			)
+	</insert>
+
+<!-- SUBQUERY로 한건의 댓글을 넣을때용 사용 안함. 
+		INSERT /* BoardMapper.insertBoardOne 게시판 Insert */
+		INTO MAIN_BOARD(
+			SEQ
+			, CATEGORY
+			, TITLE
+			, BODY_TEXT
+			, ORIGIN_BOARD_SEQ
+			, ORDER_NUM
+			, CNG_USER_NO
+			, REG_DT
+			, CNG_DT
+			)
+			SELECT 115
+			, 'NOTICE'
+			, '댓글제목'
+			, '댓글 테스트 샘ㅍ플'
+			, 110
+			, (SELECT IFNULL(MAX(ORDER_NUM),0) AS NUM FROM main_board WHERE ORIGIN_BOARD_SEQ =110)
+			, 17
+			, CURRENT_TIMESTAMP()
+			, CURRENT_TIMESTAMP() FROM DUAL
+			;
+ -->
+ 
+	<insert id="insertBoardFile" parameterType="java.util.HashMap">
+		<selectKey resultType="int" keyProperty="fileSeq" keyColumn="FILE_SEQ" order="BEFORE">
+			SELECT IFNULL(MAX(FILE_SEQ)+1 , '1') AS FILE_SEQ
+			  FROM board_add_file
+			 WHERE SEQ = #{boardSeq}
+		</selectKey>
+
+		INSERT /* BoardMapper.insertBoardFile 게시판 첨부파일 Insert */
+		INTO BOARD_ADD_FILE(
+			SEQ
+			, FILE_SEQ
+			, FILE_NAME
+			, FILE_DATA
+			, FILE_SIZE
+			, FILE_EXTENSION
+			, REG_DT
+			, CNG_DT
+			)
+		VALUES(
+			#{boardSeq}
+			, #{fileSeq}
+			, #{fileName}
+			, #{fileData}
+			, #{fileSize}
+			, #{fileExtension}
+			, CURRENT_TIMESTAMP()
+			, CURRENT_TIMESTAMP()
+			)
+	</insert>
+
+	<update id="updateBoardOne">
+		UPDATE MAIN_BOARD /* BoardMapper.updateBoardOne 게시판 update */
+		SET    CATEGORY  = #{category},
+		       TITLE     = #{title},
+		       BODY_TEXT = #{bodyText},
+		       CNG_DT    = CURRENT_TIMESTAMP()
+		WHERE SEQ = #{seq}
+	</update>
+	
+	<delete id="deleteBoardOne">
+		DELETE FROM MAIN_BOARD /* BoardMapper.deleteBoardOne 게시판 delete */
+		WHERE  SEQ = #{seq}
+	</delete>
+
+	<delete id="deleteBoardFile">
+		DELETE FROM BOARD_ADD_FILE /* BoardMapper.deleteBoardFile 게시판 첨부파일 delete */
+		WHERE  SEQ = #{seq}
+	</delete>
+
+
+		
+</mapper>

@@ -82,24 +82,27 @@
 
 	//nowPage가 시작. 최대 5개까지만 보여주기.
 	function gfn_makePaging(nowPage,totalCnt,pagePerCnt,divName,fn) {
-//			$("#paging").empty();
 		$('#'+divName).empty();
-		if(totalCnt > 0) {
+		let numNowPage = Number(nowPage);
+		let numTotalCnt = Number(totalCnt);
+		let numPagePerCnt = Number(pagePerCnt);
+		
+		if(numTotalCnt > 0) {
 			
 			let showPagingCnt = 5;//페이징은 5개까지만
 			let maxPagingCnt = 0;//
 			
-			let totalPageCnt = Math.floor(totalCnt / pagePerCnt) ;
-			let remainder = totalCnt % pagePerCnt;
+			let totalPageCnt = Math.floor(numTotalCnt / numPagePerCnt) ;
+			let remainder = numTotalCnt % numPagePerCnt;
 			if ( remainder != 0) {
 				totalPageCnt += 1; 
 			}
-			if(nowPage > totalPageCnt) {
-				nowPage = totalPageCnt;
+			if(numNowPage > totalPageCnt) {
+				numNowPage = totalPageCnt;
 			}
 			
-			if( (nowPage + showPagingCnt - 1) < totalPageCnt ) {
-				maxPagingCnt = nowPage + showPagingCnt -1;
+			if( (numNowPage + showPagingCnt - 1) < totalPageCnt ) {
+				maxPagingCnt = numNowPage + showPagingCnt -1;
 			} else {
 				maxPagingCnt = totalPageCnt;
 			}
@@ -107,26 +110,26 @@
 //			console.log(totalPageCnt);
 			
 			let pagingHtml =  '';
-			if( nowPage == 1 ) {
+			if( numNowPage == 1 ) {
 				pagingHtml = pagingHtml + '';
-			} else if ( nowPage > 1) {
+			} else if ( numNowPage > 1) {
 				pagingHtml = pagingHtml + '<a href="javascript:'+fn+'(1);" ><span > 처음 </span></a>&nbsp;';
-				if ( nowPage >= 2) {
-					pagingHtml = pagingHtml + '<a href="javascript:'+fn+'('+(nowPage-1)+');" ><span > 이전 </span></a>&nbsp;';
+				if ( numNowPage >= 2) {
+					pagingHtml = pagingHtml + '<a href="javascript:'+fn+'('+(numNowPage-1)+');" ><span > 이전 </span></a>&nbsp;';
 				}
 			}
 			
-			for(var i = nowPage ; i <= maxPagingCnt ; i++) {
-				if( i == nowPage) {
-					pagingHtml = pagingHtml + '<strong> '+nowPage+' </strong>&nbsp;';
+			for(var i = numNowPage ; i <= maxPagingCnt ; i++) {
+				if( i == numNowPage) {
+					pagingHtml = pagingHtml + '<strong> '+numNowPage+' </strong>&nbsp;';
 				} else {
 					pagingHtml = pagingHtml + '<a href="javascript:'+fn+'('+i+');" > '+i+' </a>&nbsp;';
 				}
 			}
-			if ( nowPage < totalPageCnt) {
-				pagingHtml = pagingHtml + '<a href="javascript:'+fn+'('+(nowPage+1)+');" ><span > 다음 </span></a>&nbsp;';
+			if ( numNowPage < totalPageCnt) {
+				pagingHtml = pagingHtml + '<a href="javascript:'+fn+'('+(numNowPage+1)+');" ><span > 다음 </span></a>&nbsp;';
 			}
-			if ( nowPage < totalPageCnt) {
+			if ( numNowPage < totalPageCnt) {
 				pagingHtml = pagingHtml + '<a href="javascript:'+fn+'('+totalPageCnt+');" ><span > 마지막 </span></a>';
 			}
 			

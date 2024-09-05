@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.com">
+<head>
+	<meta charset="UTF-8">
+	<title>샘플</title>
+	 
+	<link th:href="@{/css/base.css}" rel="stylesheet" />
+	<script th:src="@{/js/comm/jquery-3.7.1.js}"></script>
+	<script th:src="@{/js/comm/siteComm.js}"></script>
+	<script>
+
+	const boardList = (nowPage) => {
+		console.log('ajax start');
+
+		$("#boardList").show();
+		$("#boardDetail").hide();
+
+		let pageListCnt = 8;
+		console.log($("#listTable tr").length);
+		if ( $("#listTable tr").length != 1) {
+			while($("#listTable tr").length != 1) {
+				$("#listTable > tbody:last > tr:last").remove();
+			}
+		}
+
+		$.ajax({
+			type : "POST",
+			url : "/board/boardList.do",
+			async : true,
+			dataType : 'json',
+			headers : {"Content-Type" : "application/json"},
+			data : JSON.stringify({ 'nowPage':nowPage, 'pageListCnt':pageListCnt, 'category':$("#category").val(), 'title':$("#title").val() }),    
+			success : function(result) {
+				console.log(result);
+				let appendStr;
+				$(result.RESULT_LIST).each(function(index){
+					appendStr += "<TR>";
+					appendStr += '<TD>'+result.RESULT_LIST[index].SEQ + '</TD>';
+					appendStr += '<TD>'+result.RESULT_LIST[index].CATEGORY + '</TD>';
+					appendStr += '<TD>'+result.RESULT_LIST[index].CODE_NAME + '</TD>';
+					appendStr += '<TD><a href="javascript:showDetail('+result.RESULT_LIST[index].SEQ+')">'+result.RESULT_LIST[index].TITLE + '</a></TD>';
+					appendStr += '<TD>'+result.RESULT_LIST[index].BODY_TEXT + '</TD>';
+					appendStr += '<TD>'+result.RESULT_LIST[index].USER_NO + '</TD>';
+					appendStr += '<TD>'+result.RESULT_LIST[index].REG_DT + '</TD>';
+					appendStr += '<TD>'+result.RESULT_LIST[index].CNG_DT + '</TD>';
+					appendStr += '</TR>';
+				});
+				
+                $("#listTable").append(appendStr);
+                fn_makePaging(nowPage,result.RESULT_TOTAL_CNT,pageListCnt,'paging','boardList');
+			},
+			error : function(res) {
+				console.log(res.status);
+				console.log(res.responseJSON);
+			}
+		});		
+	}
+	
+	$(function() {
+		//XSS 처리를 위한 방법. 서버에서 처리해서 th:text로 해도 되고. thymeleaf가 아닐경우 escape이 자동 처리 되지 않으면 아래와 같이 처리
+		$("[id^='descripTd']").each(function() {
+			console.log($(this).text());
+			$(this).text(gfn_changeXSS($(this).text()));
+		});
+		$("[id^='titleTd']").each(function() {
+			console.log($(this).text());
+			$(this).text(gfn_changeXSS($(this).text()));
+		});
+		
+		//nowPage가 시작. 최대 5개까지만 보여주기.
+		gfn_makePaging('[[${nowPage}]]','[[${resultTotalCnt}]]', '[[${pageListCnt}]]','paging','searchList');
+		console.log('document.onload()');
+	})
+	
+	function searchList(pageIndex) {
+		$("#nowPage").val(pageIndex);
+		$("#mainForm").attr("action", "/board/boardList.do");
+		gfn_submit('mainForm');
+	}
+
+	function editBoard(seq) {
+		$("#seq").val(seq);
+		$("#mainForm").attr("action", "/board/boardEdit.do");
+		gfn_submit('mainForm');
+	}
+
+	function registBoard() {
+		location.href="/board/boardEdit.do";
+	}
+	</script>
+
+</head>
+<body>
+	<div>
+		<form action="/board/boardList.do" method="post" id="mainForm" name="mainForm" onsubmit="return false">
+		<input type="hidden" name="seq" id="seq" value="" >
+		<input type="hidden" name="nowPage" id="nowPage" th:value="${nowPage}" >
+		<div>
+			<h1>[[${categoryNm}]] 게시판</h1>
+			<select name="category" id="category">
+				<option value="" selected="selected">게시판종류</option>
+				<option value="BASE">기본</option>
+				<option value="NOTICE">공지</option>
+			</select>
+			<input name="title" id="title" value="" placeholder="제목" onkeyup="if(window.event.keyCode==13){gfn_submit('mainForm')}">
+			<button type="button" id="s1" onclick="javascript:gfn_submit('mainForm');"><span><strong>조회</strong></span></button>
+			<button type="button" id="s2" onclick="javascript:registBoard();"><span><strong>등록</strong></span></button>
+		</div>
+		<div>
+			<h4>총 [[${resultTotalCnt}]]건</h4>
+       		<table id="listTable">
+       			<colgroup>
+       				<col width="5%"/>
+       				<col width="10%"/>
+       				<col width="15%"/>
+       				<col width="20%"/>
+       				<col width="20%"/>
+       				<col width="10%"/>
+       				<col width="10%"/>
+       				<col width="10%"/>
+       			</colgroup>
+       			<tr>
+       				<th align="center">순번</th>
+       				<th align="center">카테고리</th>
+       				<th align="center">코드명</th>
+       				<th align="center">제목</th>
+       				<th align="center">내용</th>
+       				<th align="center">등록자</th>
+       				<th align="center">등록일</th>
+       				<th align="center">변경일</th>
+       			</tr>
+				<tr th:each="rowData:${resultList}">
+					<td th:text="${rowData.SEQ}"></td>
+					<td th:text="${rowData.CATEGORY}"></td>
+					<td th:text="${rowData.CODE_NAME}"></td>
+					<td ><a href="#" th:onclick="'javascript:editBoard('+ ${rowData.SEQ} + ');'" th:text="${rowData.TITLE}"  th:id="'titleTd'+${rowDataStat.index}"></a></td>
+					<td th:text="${rowData.BODY_TEXT}" th:id="'descripTd'+${rowDataStat.index}"></td>
+					<td th:text="${rowData.CNG_USER_NO}"></td>
+					<td th:text="${rowData.REG_DT2}"></td>
+					<td th:text="${rowData.CNG_DT}"></td>
+				</tr>
+			</table>		
+		</div>
+       	<div id="paging" ></div>
+		</form>
+	</div>
+	
+</body>
+</html>

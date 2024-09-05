@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,7 +32,7 @@ public class SampleController {
 	private final Logger logger = LogManager.getLogger(SampleController.class);
 	
 	@Autowired
-	private SampleServiceImpl sampleService;
+	private SampleService sampleService;
 	
 	@GetMapping("/sample.do")
 	public String sample(Model model) {
@@ -58,7 +59,7 @@ public class SampleController {
 	 * @return
 	 * @throws Exception 
 	 */
-	@RequestMapping("/urlToView/{subPath}/{viewName}")
+	@RequestMapping(value="/urlToView/{subPath}/{viewName}" , method = {RequestMethod.GET, RequestMethod.POST})
 	public ModelAndView subPathUrlToHtml( @RequestParam HashMap<String,String> map,
 			@PathVariable("subPath") String subPath,
 			@PathVariable("viewName") String viewName) throws Exception {
@@ -79,7 +80,7 @@ public class SampleController {
 		return mv;
 	}
 	
-	@RequestMapping("/sampleList.do")
+	@RequestMapping(value="/sampleList.do", method = {RequestMethod.GET, RequestMethod.POST})
 	public ModelAndView sampleList(@RequestParam HashMap<String,String> map) throws Exception {
 		
 		logger.debug("@@@@@@@@@@ sampleList  @@@@@@@@@@"+map);
@@ -110,7 +111,7 @@ public class SampleController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/ajaxSampleList.do")
+	@RequestMapping(value = "/ajaxSampleList.do" , method = {RequestMethod.GET, RequestMethod.POST})
 	public Map<String, Object> ajaxSampleList(@RequestBody HashMap<String, String> map) throws Exception {
 		logger.debug("@@@@@@@@@@ ajaxSampleList 시작=" + map);
 		Map<String, Object> retMap = new HashMap<String, Object>();
@@ -132,7 +133,7 @@ public class SampleController {
 
 	
 	@ResponseBody
-	@RequestMapping(value = "/ajaxClassInfo.do")
+	@RequestMapping(value = "/ajaxClassInfo.do" , method = {RequestMethod.GET, RequestMethod.POST})
 	public Map<String, Object> ajaxClassInfo(@RequestBody HashMap<String, String> map) throws Exception {
 		logger.debug("@@@@@@@@@@ ajaxClassInfo 시작=" + map);
 		Map<String, Object> retMap = new HashMap<String, Object>();

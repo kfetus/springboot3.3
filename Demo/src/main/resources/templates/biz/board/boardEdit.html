@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.com">
+<head>
+	<meta charset="UTF-8">
+	<title>샘플</title>
+	 
+	<link th:href="@{/css/base.css}" rel="stylesheet" />
+	<script th:src="@{/js/comm/jquery-3.7.1.js}"></script>
+	<script th:src="@{/js/comm/siteComm.js}"></script>
+	<script>
+
+	const boardList = (nowPage) => {
+		console.log('ajax start');
+
+		$("#boardList").show();
+		$("#boardDetail").hide();
+
+		let pageListCnt = 8;
+		console.log($("#listTable tr").length);
+		if ( $("#listTable tr").length != 1) {
+			while($("#listTable tr").length != 1) {
+				$("#listTable > tbody:last > tr:last").remove();
+			}
+		}
+
+		$.ajax({
+			type : "POST",
+			url : "/board/boardList.do",
+			async : true,
+			dataType : 'json',
+			headers : {"Content-Type" : "application/json"},
+			data : JSON.stringify({ 'nowPage':nowPage, 'pageListCnt':pageListCnt, 'category':$("#category").val(), 'title':$("#title").val() }),    
+			success : function(result) {
+				console.log(result);
+				let appendStr;
+				$(result.RESULT_LIST).each(function(index){
+					appendStr += "<TR>";
+					appendStr += '<TD>'+result.RESULT_LIST[index].SEQ + '</TD>';
+					appendStr += '<TD>'+result.RESULT_LIST[index].CATEGORY + '</TD>';
+					appendStr += '<TD>'+result.RESULT_LIST[index].CODE_NAME + '</TD>';
+					appendStr += '<TD><a href="javascript:showDetail('+result.RESULT_LIST[index].SEQ+')">'+result.RESULT_LIST[index].TITLE + '</a></TD>';
+					appendStr += '<TD>'+result.RESULT_LIST[index].BODY_TEXT + '</TD>';
+					appendStr += '<TD>'+result.RESULT_LIST[index].USER_NO + '</TD>';
+					appendStr += '<TD>'+result.RESULT_LIST[index].REG_DT + '</TD>';
+					appendStr += '<TD>'+result.RESULT_LIST[index].CNG_DT + '</TD>';
+					appendStr += '</TR>';
+				});
+				
+                $("#listTable").append(appendStr);
+                fn_makePaging(nowPage,result.RESULT_TOTAL_CNT,pageListCnt,'paging','boardList');
+			},
+			error : function(res) {
+				console.log(res.status);
+				console.log(res.responseJSON);
+			}
+		});		
+	}
+	
+	$(function() {
+		console.log('document.onload()');
+	})
+	
+	function registBoard() {
+		location.href="/board/boardEdit.do";
+	}
+	</script>
+
+</head>
+<body>
+	<div>
+		<form action="/board/boardList.do" method="post" id="mainForm" name="mainForm" onsubmit="return false">
+		<div>
+			<select name="category" id="category">
+				<option value="" selected="selected">게시판종류</option>
+				<option value="BASE">기본</option>
+				<option value="NOTICE">공지</option>
+			</select>
+			<input name="title" id="title" value="" placeholder="제목" onkeyup="if(window.event.keyCode==13){gfn_submit('mainForm')}">
+			<button type="button" id="s1" onclick="javascript:gfn_submit('mainForm');"><span><strong>조회</strong></span></button>
+			<button type="button" id="s1" onclick="javascript:registBoard();"><span><strong>등록</strong></span></button>
+		</div>
+
+		<table>
+			<colgroup>
+				<col width="5%"/>
+				<col width="20%"/>
+				<col width="10%"/>
+				<col width="15%"/>
+				<col width="10%"/>
+				<col width="10%"/>
+				<col width="15%"/>
+				<col width="15%"/>
+			</colgroup>
+			<tr>
+				<th align="center">pk</th>
+				<th align="center">varchar타입</th>
+				<th align="center">int타입</th>
+				<th align="center">date타입</th>
+				<th align="center">char타입</th>
+				<th align="center">파일명</th>
+				<th align="center">설명</th>
+				<th align="center">수정일</th>
+			</tr>
+			<tr th:each="rowData:${list}">
+				<td th:text="${rowData.PK}"></td>
+				<td th:text="${rowData.VARCHAR_COL}"></td>
+				<td th:text="${rowData.INT_COL}"></td>
+				<td th:text="${rowData.DATE_COL}"></td>
+				<td th:text="${rowData.CHAR_COL}"></td>
+				<td th:text="${rowData.BLOB_NAME}"></td>
+				<td th:text="${rowData.DESCRIP}" th:id="'descripTd'+${rowDataStat.index}"></td>
+				<!--/* td th:utext="${rowData.DESCRIP}"></td--><!-- XSS 관련 서버에서 컨버팅된 데이터가 저장되 있으면 이렇게 처리하면 escape 적용되서 보임. 서버에서 이미 스크립트를 변환하면 실행 되버리니 주의 */-->
+				<td th:text="${rowData.CNG_DT}"></td>
+			</tr>
+		</table>
+		</form>
+	</div>
+	
+</body>
+</html>
