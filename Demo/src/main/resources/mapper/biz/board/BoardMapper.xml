@@ -27,6 +27,7 @@
 				, C.COMMENT_CNT
 				, A.ORDER_NUM
 				, A.CNG_USER_NO
+				, CONCAT(D.FILE_NAME, '.', D.FILE_EXTENSION) AS FILE_INFO
 				, DATE_FORMAT(A.REG_DT, '%Y-%m-%d %H:%i:%s') REG_DT
 				, DATE_FORMAT(A.REG_DT, '%Y-%m-%d') REG_DT2
 				, DATE_FORMAT(A.CNG_DT, '%Y-%m-%d') CNG_DT
@@ -36,6 +37,7 @@
 									FROM main_board
 								   WHERE ORIGIN_BOARD_SEQ IS NOT NULL
 								GROUP BY ORIGIN_BOARD_SEQ) AS C ON A.SEQ = C.ORIGIN_BOARD_SEQ
+				 LEFT JOIN BOARD_ADD_FILE D ON A.SEQ = D.SEQ 
 		  WHERE A.ORIGIN_BOARD_SEQ IS NULL 
 			<if test="seq != null and seq != '' ">AND A.SEQ = #{seq}</if>
 			<if test="title != null and title != '' ">AND A.TITLE LIKE CONCAT('%',#{title},'%')</if>

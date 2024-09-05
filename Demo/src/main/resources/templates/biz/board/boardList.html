@@ -126,7 +126,7 @@
        				<th align="center">제목</th>
        				<th align="center">내용</th>
        				<th align="center">등록자</th>
-       				<th align="center">등록일</th>
+       				<th align="center">첨부파일</th>
        				<th align="center">변경일</th>
        			</tr>
 				<tr th:each="rowData:${resultList}">
@@ -136,7 +136,7 @@
 					<td ><a href="#" th:onclick="'javascript:editBoard('+ ${rowData.SEQ} + ');'" th:text="${rowData.TITLE}"  th:id="'titleTd'+${rowDataStat.index}"></a></td>
 					<td th:text="${rowData.BODY_TEXT}" th:id="'descripTd'+${rowDataStat.index}"></td>
 					<td th:text="${rowData.CNG_USER_NO}"></td>
-					<td th:text="${rowData.REG_DT2}"></td>
+					<td th:text="${rowData.FILE_INFO}"></td>
 					<td th:text="${rowData.CNG_DT}"></td>
 				</tr>
 			</table>		
