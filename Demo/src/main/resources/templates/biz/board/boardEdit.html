@@ -10,50 +10,12 @@
 
 	<script>
 
-	const boardList = (nowPage) => {
-		console.log('ajax start');
+	const saveData = () => {
 
-		$("#boardList").show();
-		$("#boardDetail").hide();
+	}	
 
-		let pageListCnt = 8;
-		console.log($("#listTable tr").length);
-		if ( $("#listTable tr").length != 1) {
-			while($("#listTable tr").length != 1) {
-				$("#listTable > tbody:last > tr:last").remove();
-			}
-		}
+	const updateData = () => {
 
-		$.ajax({
-			type : "POST",
-			url : "/board/boardList.do",
-			async : true,
-			dataType : 'json',
-			data : JSON.stringify({ 'nowPage':nowPage, 'pageListCnt':pageListCnt, 'category':$("#category").val(), 'title':$("#title").val() }),    
-			success : function(result) {
-				console.log(result);
-				let appendStr;
-				$(result.RESULT_LIST).each(function(index){
-					appendStr += "<TR>";
-					appendStr += '<TD>'+result.RESULT_LIST[index].SEQ + '</TD>';
-					appendStr += '<TD>'+result.RESULT_LIST[index].CATEGORY + '</TD>';
-					appendStr += '<TD>'+result.RESULT_LIST[index].CODE_NAME + '</TD>';
-					appendStr += '<TD><a href="javascript:showDetail('+result.RESULT_LIST[index].SEQ+')">'+result.RESULT_LIST[index].TITLE + '</a></TD>';
-					appendStr += '<TD>'+result.RESULT_LIST[index].BODY_TEXT + '</TD>';
-					appendStr += '<TD>'+result.RESULT_LIST[index].USER_NO + '</TD>';
-					appendStr += '<TD>'+result.RESULT_LIST[index].REG_DT + '</TD>';
-					appendStr += '<TD>'+result.RESULT_LIST[index].CNG_DT + '</TD>';
-					appendStr += '</TR>';
-				});
-				
-                $("#listTable").append(appendStr);
-                fn_makePaging(nowPage,result.RESULT_TOTAL_CNT,pageListCnt,'paging','boardList');
-			},
-			error : function(res) {
-				console.log(res.status);
-				console.log(res.responseJSON);
-			}
-		});		
 	}	
 
 	const moveList = () => {
@@ -98,7 +60,7 @@
 		</form>		
 	</div>
 	<div style="padding: 10px;"></div>
-	<div th:if="${#lists.size(commentList) != 0}">
+	<div th:if="${not #lists.isEmpty(commentList)}">
 		<div>
 			<div style="padding: 1px;"></div>
 			<h3>댓글목록</h3>
@@ -112,8 +74,9 @@
 	</div>
 	<div style="padding: 10px;"></div>
 	<div>
-		<button type="button" id="s1" onclick="javascript:submitUpload();"><span>submit저장</span></button>
-		<button type="button" id="s1" onclick="javascript:moveList();"><span><strong>목록</strong></span></button>
+		<button th:if="${#strings.isEmpty(paramSeq)}" type="button" id="saveBtn" onclick="javascript:saveData();"><span>저장</span></button>
+		<button th:if="${not #strings.isEmpty(paramSeq)}" type="button" id="updateBtn" onclick="javascript:updateData();"><span>수정</span></button>
+		<button type="button" id="listBtn" onclick="javascript:moveList();"><span><strong>목록</strong></span></button>
 	</div>
 </body>
 </html>

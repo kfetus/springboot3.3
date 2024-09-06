@@ -60,7 +60,6 @@ public class BoardController {
 		List<HashMap<String,String>> codeList = codeService.selectCodeList("BOARD");
 		model.addAttribute("codeList", codeList);
 		
-		
 		int totalCnt = boardService.selectBoardListCnt(map);
 		
 		int nowPage = 1;
@@ -72,7 +71,6 @@ public class BoardController {
 			model.addAttribute("resultSize", totalCnt);
 			model.addAttribute("resultTotalCnt", totalCnt);
 			return viewName;
-			
 		} else {
 			
 			if( !ObjectUtils.isEmpty(map.get("nowPage")) && StringUtils.hasText(String.valueOf(map.get("nowPage")))) {
@@ -96,8 +94,6 @@ public class BoardController {
 			model.addAttribute("resmsg", "");
 			model.addAttribute("resultList", resultList);
 			model.addAttribute("resultTotalCnt", totalCnt);
-			
-			
 		}
 		model.addAttribute("nowPage", nowPage);
 		model.addAttribute("pageListCnt", pageListCnt);

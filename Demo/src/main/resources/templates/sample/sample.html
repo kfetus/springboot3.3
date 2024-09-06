@@ -1,11 +1,19 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.com">
-	<head>
-		<meta charset="UTF-8">
-		<title>샘플</title>
-	</head>
-	<body>
-		<h1>sample 페이지</h1>
-		<p>test data <span th:text="${data1}"></span></p>
-	</body>
+<html lang="ko" xmlns:th="http://www.thymeleaf.com" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{framework/layout/mainLayOut}">
+	
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	    <!--    <link rel="stylesheet" th:href="@{/css/page/home.css}" >-->
+	</th:block>
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	    <!--    <script th:src="@{/js/page/home.js}"></script>-->
+	</th:block>
+	
+	<!-- Content -->
+	<div layout:fragment="content">
+			<h1>sample 페이지</h1>
+			<p>test data <span th:text="${data1}"></span></p>
+	</div>
+
 </html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.com" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+	<meta charset="UTF-8">
+	<title>레이아웃</title>
+	<meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1, user-scalable=yes,initial-scale=1.0" /> 
+
+	<link th:href="@{/css/base.css}" rel="stylesheet" />
+    <!-- content script -->
+    <th:block layout:fragment="css"></th:block>
+    <!-- content script -->
+    <th:block layout:fragment="script"></th:block>
+
+	<script th:src="@{/js/comm/jquery-3.7.1.js}"></script>
+	<script th:src="@{/js/comm/siteComm.js}"></script>
+
+</head>
+<body>
+
+    <th:block th:replace="framework/layout/mainHeader :: headerFrag"></th:block>
+
+    <th:block layout:fragment="content"></th:block>
+
+    <th:block th:replace="framework/layout/mainFooter :: footerFrag"></th:block>
+</body>
+</html>
