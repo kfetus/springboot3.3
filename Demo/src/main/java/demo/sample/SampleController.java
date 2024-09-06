@@ -51,6 +51,14 @@ public class SampleController {
 		return model;
 	}
 
+	@GetMapping("/sample2.do")
+	public String sample2(Model model) {
+		logger.debug("@@@@@@@@@@ debug sample1");
+		logger.info("@@@@@@@@@@ info sample1");
+		model.addAttribute("data1", "가나다라마바사12sample1");
+		return "sample/sample1";
+	}
+
 	/**
 	 * url에 들어온 url 그대로 view로 매핑. 파라미터들 그대로 전달
 	 * @param map

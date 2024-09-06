@@ -8,11 +8,9 @@
 				COUNT(A.SEQ) AS TOTAL_CNT
 		  FROM MAIN_BOARD A 
 		 WHERE A.ORIGIN_BOARD_SEQ IS NULL 
-		<where>
 			<if test="seq != null and seq != '' ">AND A.SEQ = #{seq}</if>
 			<if test="title != null and title != '' ">AND A.TITLE LIKE CONCAT('%',#{title},'%')</if>
 			<if test="category != null and category != '' ">AND A.CATEGORY = #{category}</if>
-		</where>
     </select>
 
 

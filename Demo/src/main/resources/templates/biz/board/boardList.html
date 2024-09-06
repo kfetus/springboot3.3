@@ -28,7 +28,6 @@
 			url : "/board/boardList.do",
 			async : true,
 			dataType : 'json',
-			headers : {"Content-Type" : "application/json"},
 			data : JSON.stringify({ 'nowPage':nowPage, 'pageListCnt':pageListCnt, 'category':$("#category").val(), 'title':$("#title").val() }),    
 			success : function(result) {
 				console.log(result);
@@ -84,9 +83,6 @@
 		gfn_submit('mainForm');
 	}
 
-	function registBoard() {
-		location.href="/board/boardEdit.do";
-	}
 	</script>
 
 </head>
@@ -96,15 +92,19 @@
 		<input type="hidden" name="seq" id="seq" value="" >
 		<input type="hidden" name="nowPage" id="nowPage" th:value="${nowPage}" >
 		<div>
-			<h1>[[${categoryNm}]] 게시판</h1>
+			<h1>[[${categoryNm}]] 게시판[[${category}]]</h1>
 			<select name="category" id="category">
-				<option value="" selected="selected">게시판종류</option>
-				<option value="BASE">기본</option>
-				<option value="NOTICE">공지</option>
+				<option value="" th:selected="category == ''">게시판종류</option>
+				<option value="BASE" th:selected="${category == 'BASE'}">기본</option>
+				<option value="NOTICE" th:selected="${category == 'NOTICE'}">공지</option>
+<!-- /*
+        <option th:each="categoryOne: ${categories}" th:value="${categoryOne.id}" th:text="${categoryOne.name}"
+                th:selected="${item.category != null && item.category.id == categoryOne.id}">category name</option>
+ */ -->
 			</select>
-			<input name="title" id="title" value="" placeholder="제목" onkeyup="if(window.event.keyCode==13){gfn_submit('mainForm')}">
-			<button type="button" id="s1" onclick="javascript:gfn_submit('mainForm');"><span><strong>조회</strong></span></button>
-			<button type="button" id="s2" onclick="javascript:registBoard();"><span><strong>등록</strong></span></button>
+			<input name="title" id="title" th:value="${title}" placeholder="제목" onkeyup="if(window.event.keyCode==13){gfn_submit('mainForm')}">
+			<button type="button" id="s1" onclick="javascript:searchList('1');"><span><strong>조회</strong></span></button>
+			<button type="button" id="s2" onclick="javascript:editBoard();"><span><strong>등록</strong></span></button>
 		</div>
 		<div>
 			<h4>총 [[${resultTotalCnt}]]건</h4>

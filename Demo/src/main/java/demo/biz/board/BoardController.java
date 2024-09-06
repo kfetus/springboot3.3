@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,18 +38,24 @@ public class BoardController {
      * @throws Exception
      */
 	@RequestMapping(value="/boardList.do" , method = {RequestMethod.GET, RequestMethod.POST})
-	public ModelAndView boardList(@RequestParam HashMap<String,Object> map) throws Exception {
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("biz/board/boardList");
+	public String boardList(Model model, @RequestParam HashMap<String,Object> map) throws Exception {
+//		ModelAndView mv = new ModelAndView();
+		String viewName = "biz/board/boardList";
+//		mv.setViewName("biz/board/boardList");
 		
 		logger.debug("@@@@@@@@@@ boardList START="+map);
+		logger.debug("@@@@@@@@@@ boardList START="+model);
+		model.mergeAttributes(map);
+		
+		logger.debug("@@@@@@@@@@ boardList START="+model);
 		
 		String category = String.valueOf(map.get("category"));
 		String categoryNm = "기본";
 		if (StringUtils.hasText(category) && "NOTICE".equals(categoryNm)) {
 			categoryNm = "공지";
 		}
-		mv.addObject("categoryNm", categoryNm);
+//		mv.addObject("categoryNm", categoryNm);
+		model.addAttribute("categoryNm", categoryNm);
 		
 		int totalCnt = boardService.selectBoardListCnt(map);
 		
@@ -58,9 +65,13 @@ public class BoardController {
 		int startIdx = 0;
 		
 		if (totalCnt == 0) {
-			mv.addObject("resultSize", totalCnt);
-			mv.addObject("resultTotalCnt", totalCnt);
-			return mv;
+//			mv.addObject("resultSize", totalCnt);
+//			mv.addObject("resultTotalCnt", totalCnt);
+//			return mv;
+			model.addAttribute("resultSize", totalCnt);
+			model.addAttribute("resultTotalCnt", totalCnt);
+			return viewName;
+			
 		} else {
 			
 			if( !ObjectUtils.isEmpty(map.get("nowPage")) && StringUtils.hasText(String.valueOf(map.get("nowPage")))) {
@@ -80,17 +91,25 @@ public class BoardController {
 			//postgreSQL JDBC 드라이버는 int일 경우 '' 이 안 붙고, String 일 경우는 붙는다. 쿼리에 바인딩하는 파라미터를 Map으로 던지려면 String,Object로 받아야 처리가 된다
 			List<HashMap<String, String>> resultList = boardService.selectBoardList(map);
 
-			mv.addObject("rescode", successCode);
-			mv.addObject("resmsg", "");
-			mv.addObject("resultList", resultList);
-			mv.addObject("resultTotalCnt", totalCnt);
+//			mv.addObject("rescode", successCode);
+//			mv.addObject("resmsg", "");
+//			mv.addObject("resultList", resultList);
+//			mv.addObject("resultTotalCnt", totalCnt);
+
+			model.addAttribute("rescode", successCode);
+			model.addAttribute("resmsg", "");
+			model.addAttribute("resultList", resultList);
+			model.addAttribute("resultTotalCnt", totalCnt);
+			
+			
 		}
-		mv.addObject("nowPage", nowPage);
-		mv.addObject("pageListCnt", pageListCnt);
+//		mv.addObject("nowPage", nowPage);
+//		mv.addObject("pageListCnt", pageListCnt);
+		model.addAttribute("nowPage", nowPage);
+		model.addAttribute("pageListCnt", pageListCnt);
+		logger.debug("@@@@@@@@@@ boardList END="+model);
 
-		logger.debug("@@@@@@@@@@ boardList END="+mv);
-
-		return mv;
+		return viewName;
 	}
 	
 	@PostMapping("/boardEdit.do")
