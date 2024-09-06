@@ -11,5 +11,8 @@ public interface BoardMapper {
 	public int selectBoardListCnt(HashMap<String,Object> map);
 	
 	public List<HashMap<String,String>> selectBoardList(HashMap<String,Object> map);
+
+	public HashMap<String,String> selectBoardOne(String seq);
 	
+	public List<HashMap<String,String>> selectBoardOneCommemtList(String seq);
 }

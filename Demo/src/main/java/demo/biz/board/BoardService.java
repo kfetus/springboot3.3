@@ -26,5 +26,15 @@ public class BoardService {
 		logger.debug("@@@@@@@@@@@@@ selectBoardList param data=" + map);
 		List<HashMap<String,String>> result = boardMapper.selectBoardList(map);
 		return result;
-	}	
+	}
+	
+	public HashMap<String,String> selectBoardOne(String seq) throws Exception {
+		HashMap<String,String> result = boardMapper.selectBoardOne(seq);
+		return result;
+	}
+	
+	public List<HashMap<String,String>> selectBoardOneCommemtList(String seq) throws Exception {
+		List<HashMap<String,String>> result = boardMapper.selectBoardOneCommemtList(seq);
+		return result;
+	}
 }

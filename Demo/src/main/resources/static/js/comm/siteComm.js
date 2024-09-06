@@ -1,16 +1,22 @@
 /**
  * 일반적인 공통 함수
  */
+	let g_formSubmitState = false;
 
 	$(function() {
 		//로딩바 숨김
 		$(".spinner-container").hide();
-		g_formSubmitState = false;//페이지 뒤로가기 하면 값 초기화 안되는 문제 해결
 	});
+
+	//페이지 이동시 호출
+	window.onpageshow = function() {
+		//뒤로가기 하면 값 초기화 안되는 문제 해결
+		g_formSubmitState = false;
+	}
+	
 	//JWT 토큰 사용시 키값
 	const G_TOKEN_KEY = 'AccessKeyJwt';
 	
-	let g_formSubmitState = false;
 	function gfn_submit(formId) {
 		let submitForm = $('#'+formId);
 		if(!g_formSubmitState) {

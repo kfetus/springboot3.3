@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 import demo.common.SystemConstant;
+import demo.common.code.CodeService;
 
 @Controller
 @RequestMapping("/board")
@@ -27,6 +27,9 @@ public class BoardController {
 	
 	@Autowired
 	private BoardService boardService;
+	
+	@Autowired
+	private CodeService codeService;
 	
     @Value("${code.success}")
     private String successCode;	
@@ -39,9 +42,7 @@ public class BoardController {
      */
 	@RequestMapping(value="/boardList.do" , method = {RequestMethod.GET, RequestMethod.POST})
 	public String boardList(Model model, @RequestParam HashMap<String,Object> map) throws Exception {
-//		ModelAndView mv = new ModelAndView();
 		String viewName = "biz/board/boardList";
-//		mv.setViewName("biz/board/boardList");
 		
 		logger.debug("@@@@@@@@@@ boardList START="+map);
 		logger.debug("@@@@@@@@@@ boardList START="+model);
@@ -54,8 +55,11 @@ public class BoardController {
 		if (StringUtils.hasText(category) && "NOTICE".equals(categoryNm)) {
 			categoryNm = "공지";
 		}
-//		mv.addObject("categoryNm", categoryNm);
 		model.addAttribute("categoryNm", categoryNm);
+		
+		List<HashMap<String,String>> codeList = codeService.selectCodeList("BOARD");
+		model.addAttribute("codeList", codeList);
+		
 		
 		int totalCnt = boardService.selectBoardListCnt(map);
 		
@@ -65,9 +69,6 @@ public class BoardController {
 		int startIdx = 0;
 		
 		if (totalCnt == 0) {
-//			mv.addObject("resultSize", totalCnt);
-//			mv.addObject("resultTotalCnt", totalCnt);
-//			return mv;
 			model.addAttribute("resultSize", totalCnt);
 			model.addAttribute("resultTotalCnt", totalCnt);
 			return viewName;
@@ -91,11 +92,6 @@ public class BoardController {
 			//postgreSQL JDBC 드라이버는 int일 경우 '' 이 안 붙고, String 일 경우는 붙는다. 쿼리에 바인딩하는 파라미터를 Map으로 던지려면 String,Object로 받아야 처리가 된다
 			List<HashMap<String, String>> resultList = boardService.selectBoardList(map);
 
-//			mv.addObject("rescode", successCode);
-//			mv.addObject("resmsg", "");
-//			mv.addObject("resultList", resultList);
-//			mv.addObject("resultTotalCnt", totalCnt);
-
 			model.addAttribute("rescode", successCode);
 			model.addAttribute("resmsg", "");
 			model.addAttribute("resultList", resultList);
@@ -103,8 +99,6 @@ public class BoardController {
 			
 			
 		}
-//		mv.addObject("nowPage", nowPage);
-//		mv.addObject("pageListCnt", pageListCnt);
 		model.addAttribute("nowPage", nowPage);
 		model.addAttribute("pageListCnt", pageListCnt);
 		logger.debug("@@@@@@@@@@ boardList END="+model);
@@ -113,17 +107,27 @@ public class BoardController {
 	}
 	
 	@PostMapping("/boardEdit.do")
-	public ModelAndView boardEdit(@RequestParam HashMap<String,Object> map) throws Exception {
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("biz/board/boardEdit");
+	public String boardEdit(Model model, @RequestParam HashMap<String,String> map) throws Exception {
 		
 		logger.debug("@@@@@@@@@@ boardEdit START="+map);
+		
+		List<HashMap<String,String>> codeList = codeService.selectCodeList("BOARD");
+		model.addAttribute("codeList", codeList);
+		
+		String seq = map.get("seq");
+		if(StringUtils.hasText(seq)) {
+			model.addAttribute("paramSeq", seq);
+			logger.debug("seq = "+seq);
+			HashMap<String,String> boardData = boardService.selectBoardOne(seq);
+			model.addAttribute("category",boardData.get("CATEGORY"));
+			model.addAttribute("boardData",boardData);
+			
+			List<HashMap<String,String>> list = boardService.selectBoardOneCommemtList(seq);
+			model.addAttribute("commentList",list);
+		}
 
-		mv.addObject("RESCODE", successCode);
-		mv.addObject("RESMSG", "");
-
-		logger.debug("@@@@@@@@@@ boardEdit END="+mv);
-		return mv;
+		logger.debug("@@@@@@@@@@ boardEdit END="+model);
+		return "biz/board/boardEdit";
 	}
 	
 	

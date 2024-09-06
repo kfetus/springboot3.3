@@ -2,11 +2,12 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.com">
 <head>
 	<meta charset="UTF-8">
-	<title>샘플</title>
+	<title>게시판 상세</title>
 	 
 	<link th:href="@{/css/base.css}" rel="stylesheet" />
 	<script th:src="@{/js/comm/jquery-3.7.1.js}"></script>
 	<script th:src="@{/js/comm/siteComm.js}"></script>
+
 	<script>
 
 	const boardList = (nowPage) => {
@@ -28,7 +29,6 @@
 			url : "/board/boardList.do",
 			async : true,
 			dataType : 'json',
-			headers : {"Content-Type" : "application/json"},
 			data : JSON.stringify({ 'nowPage':nowPage, 'pageListCnt':pageListCnt, 'category':$("#category").val(), 'title':$("#title").val() }),    
 			success : function(result) {
 				console.log(result);
@@ -54,67 +54,66 @@
 				console.log(res.responseJSON);
 			}
 		});		
+	}	
+
+	const moveList = () => {
+		$("#mainForm").attr("action", "/board/boardList.do");
+		gfn_submit('mainForm');		
 	}
 	
 	$(function() {
-		console.log('document.onload()');
+		//XSS 처리를 위한 방법. 서버에서 처리해서 th:text로 해도 되고. thymeleaf가 아닐경우 escape이 자동 처리 되지 않으면 아래와 같이 처리
+		$("#bodyText").text(gfn_changeXSS($("#bodyText").text()));
+		
 	})
 	
-	function registBoard() {
-		location.href="/board/boardEdit.do";
-	}
 	</script>
 
 </head>
 <body>
 	<div>
-		<form action="/board/boardList.do" method="post" id="mainForm" name="mainForm" onsubmit="return false">
+		<form action="" method="post" id="mainForm" name="mainForm" onsubmit="return false">
 		<div>
+			<label for="category">분류</label>
 			<select name="category" id="category">
-				<option value="" selected="selected">게시판종류</option>
-				<option value="BASE">기본</option>
-				<option value="NOTICE">공지</option>
+			<option value="" th:selected="category == ''">선택하세요</option>
+	        <option th:each="code: ${codeList}" th:value="${code.CODE}" th:text="${code.CODE_NAME}" th:selected="${category == code.CODE}">코드명</option>
 			</select>
-			<input name="title" id="title" value="" placeholder="제목" onkeyup="if(window.event.keyCode==13){gfn_submit('mainForm')}">
-			<button type="button" id="s1" onclick="javascript:gfn_submit('mainForm');"><span><strong>조회</strong></span></button>
-			<button type="button" id="s1" onclick="javascript:registBoard();"><span><strong>등록</strong></span></button>
+			<label for="srcTitle">제목</label>
+			<input name="srcTitle" id="srcTitle" placeholder="제목입력" th:value="${boardData?.TITLE}"/>
 		</div>
-
-		<table>
-			<colgroup>
-				<col width="5%"/>
-				<col width="20%"/>
-				<col width="10%"/>
-				<col width="15%"/>
-				<col width="10%"/>
-				<col width="10%"/>
-				<col width="15%"/>
-				<col width="15%"/>
-			</colgroup>
-			<tr>
-				<th align="center">pk</th>
-				<th align="center">varchar타입</th>
-				<th align="center">int타입</th>
-				<th align="center">date타입</th>
-				<th align="center">char타입</th>
-				<th align="center">파일명</th>
-				<th align="center">설명</th>
-				<th align="center">수정일</th>
-			</tr>
-			<tr th:each="rowData:${list}">
-				<td th:text="${rowData.PK}"></td>
-				<td th:text="${rowData.VARCHAR_COL}"></td>
-				<td th:text="${rowData.INT_COL}"></td>
-				<td th:text="${rowData.DATE_COL}"></td>
-				<td th:text="${rowData.CHAR_COL}"></td>
-				<td th:text="${rowData.BLOB_NAME}"></td>
-				<td th:text="${rowData.DESCRIP}" th:id="'descripTd'+${rowDataStat.index}"></td>
-				<!--/* td th:utext="${rowData.DESCRIP}"></td--><!-- XSS 관련 서버에서 컨버팅된 데이터가 저장되 있으면 이렇게 처리하면 escape 적용되서 보임. 서버에서 이미 스크립트를 변환하면 실행 되버리니 주의 */-->
-				<td th:text="${rowData.CNG_DT}"></td>
-			</tr>
-		</table>
-		</form>
+		<div style="padding: 10px;"></div>
+		<div>
+			<label for="bodyText" style="vertical-align: top;">내용</label>
+			<textarea name="bodyText" id="bodyText" cols="54" rows="10" placeholder="내용입력" th:text="${boardData?.BODY_TEXT}"></textarea>
+		</div>
+		<div th:if="${not #strings.isEmpty(paramSeq)}">
+			<span>첨부파일 명 :</span><span th:text="${boardData?.FILE_NAME}"></span>
+			<span>크기:</span><span th:text="${boardData?.FILE_SIZE}"></span><span>Byte</span>
+		</div>
+		<div th:if="${#strings.isEmpty(paramSeq)}">
+			<label for="srcAddFile">첨부파일</label>
+			<input type="file" id="srcAddFile"  />
+		</div>
+		</form>		
 	</div>
-	
+	<div style="padding: 10px;"></div>
+	<div th:if="${#lists.size(commentList) != 0}">
+		<div>
+			<div style="padding: 1px;"></div>
+			<h3>댓글목록</h3>
+		</div>
+		<div>
+			<div th:each="rowData:${commentList}">
+				<h4>[[${rowDataStat.count}]]댓글 제목:[[${rowData.TITLE}]]</h4>
+				<p>내용:[[${rowData.BODY_TEXT}]]</p>
+			</div>
+		</div>
+	</div>
+	<div style="padding: 10px;"></div>
+	<div>
+		<button type="button" id="s1" onclick="javascript:submitUpload();"><span>submit저장</span></button>
+		<button type="button" id="s1" onclick="javascript:moveList();"><span><strong>목록</strong></span></button>
+	</div>
 </body>
 </html>

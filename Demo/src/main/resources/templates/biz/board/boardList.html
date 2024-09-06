@@ -9,60 +9,14 @@
 	<script th:src="@{/js/comm/siteComm.js}"></script>
 	<script>
 
-	const boardList = (nowPage) => {
-		console.log('ajax start');
-
-		$("#boardList").show();
-		$("#boardDetail").hide();
-
-		let pageListCnt = 8;
-		console.log($("#listTable tr").length);
-		if ( $("#listTable tr").length != 1) {
-			while($("#listTable tr").length != 1) {
-				$("#listTable > tbody:last > tr:last").remove();
-			}
-		}
-
-		$.ajax({
-			type : "POST",
-			url : "/board/boardList.do",
-			async : true,
-			dataType : 'json',
-			data : JSON.stringify({ 'nowPage':nowPage, 'pageListCnt':pageListCnt, 'category':$("#category").val(), 'title':$("#title").val() }),    
-			success : function(result) {
-				console.log(result);
-				let appendStr;
-				$(result.RESULT_LIST).each(function(index){
-					appendStr += "<TR>";
-					appendStr += '<TD>'+result.RESULT_LIST[index].SEQ + '</TD>';
-					appendStr += '<TD>'+result.RESULT_LIST[index].CATEGORY + '</TD>';
-					appendStr += '<TD>'+result.RESULT_LIST[index].CODE_NAME + '</TD>';
-					appendStr += '<TD><a href="javascript:showDetail('+result.RESULT_LIST[index].SEQ+')">'+result.RESULT_LIST[index].TITLE + '</a></TD>';
-					appendStr += '<TD>'+result.RESULT_LIST[index].BODY_TEXT + '</TD>';
-					appendStr += '<TD>'+result.RESULT_LIST[index].USER_NO + '</TD>';
-					appendStr += '<TD>'+result.RESULT_LIST[index].REG_DT + '</TD>';
-					appendStr += '<TD>'+result.RESULT_LIST[index].CNG_DT + '</TD>';
-					appendStr += '</TR>';
-				});
-				
-                $("#listTable").append(appendStr);
-                fn_makePaging(nowPage,result.RESULT_TOTAL_CNT,pageListCnt,'paging','boardList');
-			},
-			error : function(res) {
-				console.log(res.status);
-				console.log(res.responseJSON);
-			}
-		});		
-	}
-	
 	$(function() {
 		//XSS 처리를 위한 방법. 서버에서 처리해서 th:text로 해도 되고. thymeleaf가 아닐경우 escape이 자동 처리 되지 않으면 아래와 같이 처리
 		$("[id^='descripTd']").each(function() {
-			console.log($(this).text());
+//			console.log($(this).text());
 			$(this).text(gfn_changeXSS($(this).text()));
 		});
 		$("[id^='titleTd']").each(function() {
-			console.log($(this).text());
+//			console.log($(this).text());
 			$(this).text(gfn_changeXSS($(this).text()));
 		});
 		
