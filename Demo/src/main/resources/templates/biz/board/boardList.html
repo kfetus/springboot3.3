@@ -61,31 +61,31 @@
        		<table id="listTable">
        			<colgroup>
        				<col width="5%"/>
-       				<col width="10%"/>
        				<col width="15%"/>
        				<col width="20%"/>
        				<col width="20%"/>
        				<col width="10%"/>
        				<col width="10%"/>
        				<col width="10%"/>
+       				<col width="10%"/>
        			</colgroup>
        			<tr>
        				<th align="center">순번</th>
-       				<th align="center">카테고리</th>
-       				<th align="center">코드명</th>
+       				<th align="center">게시판종류</th>
        				<th align="center">제목</th>
        				<th align="center">내용</th>
        				<th align="center">등록자</th>
+       				<th align="center">댓글수</th>
        				<th align="center">첨부파일</th>
        				<th align="center">변경일</th>
        			</tr>
 				<tr th:each="rowData:${resultList}">
 					<td th:text="${rowData.SEQ}"></td>
-					<td th:text="${rowData.CATEGORY}"></td>
 					<td th:text="${rowData.CODE_NAME}"></td>
 					<td ><a href="#" th:onclick="'javascript:editBoard('+ ${rowData.SEQ} + ');return false;'" th:text="${rowData.TITLE}"  th:id="'titleTd'+${rowDataStat.index}"></a></td>
 					<td th:text="${rowData.BODY_TEXT}" th:id="'descripTd'+${rowDataStat.index}"></td>
 					<td th:text="${rowData.CNG_USER_NO}"></td>
+					<td th:text="${rowData.COMMENT_CNT}"></td>
 					<td th:text="${rowData.FILE_INFO}"></td>
 					<td th:text="${rowData.CNG_DT}"></td>
 				</tr>
