@@ -7,21 +7,27 @@
 	<meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1, user-scalable=yes,initial-scale=1.0" /> 
 
 	<link th:href="@{/css/base.css}" rel="stylesheet" />
-    <!-- content script -->
-    <th:block layout:fragment="css"></th:block>
-    <!-- content script -->
-    <th:block layout:fragment="script"></th:block>
 
 	<script th:src="@{/js/comm/jquery-3.7.1.js}"></script>
 	<script th:src="@{/js/comm/siteComm.js}"></script>
 
+    <th:block layout:fragment="css"></th:block>
+    <th:block layout:fragment="script"></th:block>
+
+	<style th:inline="css" type="text/css">
+		.div_layout {
+			border: 1px solid black;
+		}
+	</style>
+
 </head>
 <body>
-
-    <th:block th:replace="framework/layout/mainHeader :: headerFrag"></th:block>
-
-    <th:block layout:fragment="content"></th:block>
-
-    <th:block th:replace="framework/layout/mainFooter :: footerFrag"></th:block>
+	<div>
+	    <th:block th:replace="framework/layout/mainHeader :: headerFrag"></th:block>
+	
+	    <th:block layout:fragment="content"></th:block>
+	
+	    <th:block th:replace="framework/layout/mainFooter :: footerFrag"></th:block>
+    </div>
 </body>
 </html>

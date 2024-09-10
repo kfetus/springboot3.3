@@ -1,111 +1,106 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.com">
+<html lang="ko" xmlns:th="http://www.thymeleaf.com" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{framework/layout/mainLayOut}">
 <head>
-	<meta charset="UTF-8">
-	<title>샘플</title>
-	 
-	<link th:href="@{/css/base.css}" rel="stylesheet" />
-	<script th:src="@{/js/comm/jquery-3.7.1.js}"></script>
-	<script th:src="@{/js/comm/siteComm.js}"></script>
+	<title>샘플 목록</title>
+</head>
+	<th:block layout:fragment="script">
 	<script>
+	const ajaxUpload = () => {
 
-		const ajaxUpload = () => {
-
-			if ($("#srcVarcharCol").val() == '') {
-		        alert("varchar값 없어.");
-		        $("#srcVarcharCol").focus();
-		        return;
-		    }
-			if ($("#srcIntCol").val() == '') {
-		        alert("int값 없어.");
-		        $("#srcIntCol").focus();
-		        return;
-		    }
-			if ($("#srcDescrip").val() == '') {
-		        alert("내용이 없어.");
-		        $("#srcDescrip").focus();
-		        return;
-		    }
-			
-			var formData = new FormData();
-			var inputFile = $("#srcBlobData");
-			var files = inputFile[0].files;
-			
-			console.log(files[0]);
-			
-			if( !!files[0] ) {
-				var reg = /(.*?)\/(jpg|jpeg|png|bmp)$/;
-				if (!files[0].type.match(reg)) {
-		            alert("확장자는 이미지 확장자만 가능합니다.");
-		            return;
-		        }
-			}
-
-		    formData.append('varcharCol',$("#srcVarcharCol").val());
-		    formData.append('intCol',$("#srcIntCol").val());
-			formData.append('dateCol',$("#srcDateCol").val());
-			formData.append('charCol',$("#srcCharCol").val());
-		    formData.append('descrip',$("#srcDescrip").val());
-			formData.append('blobName',$("#srcBlobName").val());
-			if( !!files[0] ) {
-				formData.append("multiFiles", files[0]);
-			}
-			console.log(formData);
-			$.ajax({
-				type : "POST",
-				url: "/upload/ajaxSampleUpload.do",
-				processData : false,
-				contentType : false,
-				data : formData,
-				success : function(res){
-					if(res.RESCODE == '0000'){
-						alert('성공');
-					} else {
-						alert(res.RESMSG);
-					}
-				},
-				error : function(request, status, error) {
-					console.log(error);
-				}
-			});
-		}
+		if ($("#srcVarcharCol").val() == '') {
+	        alert("varchar값 없어.");
+	        $("#srcVarcharCol").focus();
+	        return;
+	    }
+		if ($("#srcIntCol").val() == '') {
+	        alert("int값 없어.");
+	        $("#srcIntCol").focus();
+	        return;
+	    }
+		if ($("#srcDescrip").val() == '') {
+	        alert("내용이 없어.");
+	        $("#srcDescrip").focus();
+	        return;
+	    }
 		
-		$(function() {
-			//XSS 처리를 위한 방법. 서버에서 처리해서 th:text로 해도 되고. thymeleaf가 아닐경우 escape이 자동 처리 되지 않으면 아래와 같이 처리
-			$("[id^='descripTd']").each(function() {
-				console.log($(this).text());
-				$(this).text(gfn_changeXSS($(this).text()));
-			});
-			
-			console.log('document.onload()');
-		})
-
-		function fn_selectList(url) {
-			console.log('ddd');
-						
-			$.ajax({
-				type : "POST",
-				url : "/ajaxSampleList.do",
-				async : true,
-				dataType : 'json',
-//				dataType : 'text',
-				headers : {"Content-Type" : "application/json"},
-				data : JSON.stringify( {'charCol':$("#charCol").val(), 'descrip':$("#descrip").val()}),    
-				success : function(result) {
-					console.log(result);
-				},
-				error : function(res) {
-					console.log(res.status);
-					console.log(res.responseJSON);
-				}
-			});
-		}
+		var formData = new FormData();
+		var inputFile = $("#srcBlobData");
+		var files = inputFile[0].files;
 		
+		console.log(files[0]);
+		
+		if( !!files[0] ) {
+			var reg = /(.*?)\/(jpg|jpeg|png|bmp)$/;
+			if (!files[0].type.match(reg)) {
+	            alert("확장자는 이미지 확장자만 가능합니다.");
+	            return;
+	        }
+		}
+
+	    formData.append('varcharCol',$("#srcVarcharCol").val());
+	    formData.append('intCol',$("#srcIntCol").val());
+		formData.append('dateCol',$("#srcDateCol").val());
+		formData.append('charCol',$("#srcCharCol").val());
+	    formData.append('descrip',$("#srcDescrip").val());
+		formData.append('blobName',$("#srcBlobName").val());
+		if( !!files[0] ) {
+			formData.append("multiFiles", files[0]);
+		}
+		console.log(formData);
+		$.ajax({
+			type : "POST",
+			url: "/upload/ajaxSampleUpload.do",
+			processData : false,
+			contentType : false,
+			data : formData,
+			success : function(res){
+				if(res.RESCODE == '0000'){
+					alert('성공');
+				} else {
+					alert(res.RESMSG);
+				}
+			},
+			error : function(request, status, error) {
+				console.log(error);
+			}
+		});
+	}
+	
+	$(function() {
+		//XSS 처리를 위한 방법. 서버에서 처리해서 th:text로 해도 되고. thymeleaf가 아닐경우 escape이 자동 처리 되지 않으면 아래와 같이 처리
+		$("[id^='descripTd']").each(function() {
+			console.log($(this).text());
+			$(this).text(gfn_changeXSS($(this).text()));
+		});
+		
+		console.log('document.onload()');
+	})
+
+	function fn_selectList(url) {
+		console.log('ddd');
+					
+		$.ajax({
+			type : "POST",
+			url : "/ajaxSampleList.do",
+			async : true,
+			dataType : 'json',
+//			dataType : 'text',
+			headers : {"Content-Type" : "application/json"},
+			data : JSON.stringify( {'charCol':$("#charCol").val(), 'descrip':$("#descrip").val()}),    
+			success : function(result) {
+				console.log(result);
+			},
+			error : function(res) {
+				console.log(res.status);
+				console.log(res.responseJSON);
+			}
+		});
+	}
 	</script>
 
-</head>
-<body>
-	<div>
+	</th:block>
+
+	<div layout:fragment="content">
 		<form action="/sampleList.do" method="post" id="mainForm" name="mainForm" onsubmit="return false">
 
 		<h1>sample 리스트 페이지</h1>
@@ -180,8 +175,5 @@
 			<button type="button" id="s1" onclick="javascript:ajaxUpload();"><span>ajax저장</span></button>
 		</div>
 	</div>
-	
-	
-	
-</body>
+
 </html>

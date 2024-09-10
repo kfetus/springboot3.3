@@ -1,12 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.com">
+<html lang="ko" xmlns:th="http://www.thymeleaf.com" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{framework/layout/mainLayOut}">
 <head>
-	<meta charset="UTF-8">
-	<title>샘플</title>
-	 
-	<link th:href="@{/css/base.css}" rel="stylesheet" />
-	<script th:src="@{/js/comm/jquery-3.7.1.js}"></script>
-	<script th:src="@{/js/comm/siteComm.js}"></script>
+	<title>게시판 목록</title>
+</head>
+<th:block layout:fragment="script">
 	<script>
 
 	$(function() {
@@ -38,10 +35,9 @@
 	}
 
 	</script>
+</th:block>
 
-</head>
-<body>
-	<div>
+	<div layout:fragment="content">
 		<form action="/board/boardList.do" method="post" id="mainForm" name="mainForm" onsubmit="return false">
 		<input type="hidden" name="seq" id="seq" value="" >
 		<input type="hidden" name="nowPage" id="nowPage" th:value="${nowPage}" >
@@ -98,6 +94,3 @@
        	<div id="paging" ></div>
 		</form>
 	</div>
-	
-</body>
-</html>

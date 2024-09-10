@@ -1,13 +1,10 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.com">
+<html lang="ko" xmlns:th="http://www.thymeleaf.com" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{framework/layout/mainLayOut}">
 <head>
-	<meta charset="UTF-8">
-	<title>게시판 상세</title>
-	 
-	<link th:href="@{/css/base.css}" rel="stylesheet" />
-	<script th:src="@{/js/comm/jquery-3.7.1.js}"></script>
-	<script th:src="@{/js/comm/siteComm.js}"></script>
+	<title>게시판 상세/수정</title>
+</head>
 
+<th:block layout:fragment="script">
 	<script>
 
 	const saveData = () => {
@@ -30,9 +27,9 @@
 	})
 	
 	</script>
+</th:block>
 
-</head>
-<body>
+<div layout:fragment="content">
 	<div>
 		<form action="" method="post" id="mainForm" name="mainForm" onsubmit="return false">
 		<div>
@@ -78,5 +75,4 @@
 		<button th:if="${not #strings.isEmpty(paramSeq)}" type="button" id="updateBtn" onclick="javascript:updateData();"><span>수정</span></button>
 		<button type="button" id="listBtn" onclick="javascript:moveList();"><span><strong>목록</strong></span></button>
 	</div>
-</body>
-</html>
+</div>
