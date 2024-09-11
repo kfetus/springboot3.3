@@ -46,11 +46,11 @@
 			<label for="bodyText" style="vertical-align: top;">내용</label>
 			<textarea name="bodyText" id="bodyText" cols="54" rows="10" placeholder="내용입력" th:text="${boardData?.BODY_TEXT}"></textarea>
 		</div>
-		<div th:if="${not #strings.isEmpty(paramSeq)}">
-			<span>첨부파일 명 :</span><span th:text="${boardData?.FILE_NAME}"></span>
+		<div th:if="${not #strings.isEmpty(boardData?.FILE_NAME)}">
+			<span>첨부파일 명 :</span><span th:text="${boardData?.FILE_NAME}"></span><br>
 			<span>크기:</span><span th:text="${boardData?.FILE_SIZE}"></span><span>Byte</span>
 		</div>
-		<div th:if="${#strings.isEmpty(paramSeq)}">
+		<div th:if="${#strings.isEmpty(boardData?.FILE_NAME)}">
 			<label for="srcAddFile">첨부파일</label>
 			<input type="file" id="srcAddFile"  />
 		</div>
