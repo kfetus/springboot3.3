@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="demo.common.menu.SiteMenuMapper">
+
+   <select id="selectMenuList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		WITH RECURSIVE menu AS ( /* SystemSetMapper.selectMenuList 메뉴 조회 */
+			SELECT URL
+				, PARENT_URL
+				, MENU_NAME
+				, LINK_YN
+				, MENU_LEVEL
+				, ORDER_NUM
+				, URL AS URL_PATH
+				, CAST(MENU_LEVEL AS VARCHAR(100)) AS ORDER_STR
+			  FROM SYSTEM_MENU
+			 WHERE USE_YN = 'Y'
+			   AND URL = '/'
+			   <if test="sysGroup != null and sysGroup != '' ">AND SYS_GROUP = #{sysGroup}</if>
+			UNION ALL
+			SELECT A.URL
+				, A.PARENT_URL
+				, A.MENU_NAME
+				, A.LINK_YN
+				, A.MENU_LEVEL
+				, A.ORDER_NUM
+				, CONCAT(B.URL_PATH,'->',A.URL) AS URL_PATH
+				, CONCAT(B.ORDER_STR,'->',A.MENU_LEVEL,'->',A.ORDER_NUM) AS ORDER_STR
+			  FROM SYSTEM_MENU A
+			 INNER JOIN menu B ON A.PARENT_URL = B.URL
+			 WHERE A.USE_YN = 'Y'
+			 <if test="sysGroup != null and sysGroup != '' ">AND A.SYS_GROUP = #{sysGroup}</if>
+		)
+		SELECT URL
+			, PARENT_URL
+			, MENU_NAME
+			, LINK_YN
+			, MENU_LEVEL
+			, ORDER_NUM
+			, URL_PATH
+			, ORDER_STR
+		  FROM menu
+		 ORDER BY ORDER_STR, ORDER_NUM
+    </select>
+<!-- 
+		SELECT /* MenuMapper.selectMenuList 메뉴 조회 */
+				LEVEL
+				, URL
+				, MENU_NAME
+				, ORDER_NUM 
+		  FROM MENU
+		 WHERE USE_YN = 'Y' 
+		   AND TARGET_SYS_GROUP = 'APP'
+		 START WITH PARENT_URL = 'R'
+		CONNECT BY PRIOR URL = PARENT_URL
+		ORDER SIBLINGS BY ORDER_NUM
+ -->		
+</mapper>
