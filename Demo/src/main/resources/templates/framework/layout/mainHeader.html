@@ -1,7 +1,109 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.com">
-<header th:fragment="headerFrag" class="div_layout" >
-    <h1>Header Section</h1>
+
+
+<header th:fragment="headerFrag" class="header">
+  <div class="header-inner layout">
+    <h1 class="header-logo">
+      <span onclick="javascript:alert('dd');" style="cursor:pointer;display:block; font-size:26px; ">데모</span>
+    </h1>
+    <nav class="header-gnb">
+      <ul class="gnb-depth-1 ulListNone">
+        <li class="depth-1">
+          <span class="depth-1-link"><span>1차 메뉴</span></span>
+          <div class="depth-item">
+            <ul class="gnb-depth-2">
+              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차2 메뉴</span></li>
+              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차 메뉴</span></li>
+              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차 메뉴</span></li>
+              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차 메뉴</span></li>
+              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차 메뉴</span></li>
+              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차 메뉴</span></li>
+              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차 메뉴</span></li>
+            </ul>
+          </div>
+        </li>
+        <li class="depth-1">
+          <span class="depth-1-link"><span>1차 메뉴</span></span>
+          <div class="depth-item">
+            <ul class="gnb-depth-2">
+              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차2 메뉴</span></li>
+              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차 메뉴</span></li>
+              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차 메뉴</span></li>
+              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차 메뉴</span></li>
+              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차 메뉴</span></li>
+            </ul>
+          </div>
+        </li>
+        <li class="depth-1">
+          <span class="depth-1-link"><span>1차 메뉴</span></span>
+          <div class="depth-item">
+            <ul class="gnb-depth-2">
+              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차2 메뉴</span></li>
+              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차 메뉴</span></li>
+              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차 메뉴</span></li>
+              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차 메뉴</span></li>
+            </ul>
+          </div>
+        </li>
+        <li class="depth-1">
+          <span class="depth-1-link"><span>1차 메뉴</span></span>
+          <div class="depth-item">
+            <ul class="gnb-depth-2">
+              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차2 메뉴</span></li>
+              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차 메뉴</span></li>
+            </ul>
+          </div>
+        </li>      </ul>
+    </nav>
+    <div class="mobile-gnb">
+      <button class="sidebar-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <div class="sidebar-wrap">
+        <div class="sidebar">
+          <ul class="gnb-depth-1">
+            <li class="depth-1">
+              <span class="depth-1-link" style="cursor:pointer;" ><span>1차 메뉴</span></span>
+              <ul class="gnb-depth-2">
+                <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('mm');"><span class="depth-2-link">2차 메뉴</span></li>
+                <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('mm');"><span class="depth-2-link">2차 메뉴</span></li>
+                <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('mm');"><span class="depth-2-link">2차 메뉴</span></li>
+                <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('mm');"><span class="depth-2-link">2차 메뉴</span></li>
+                <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('mm');"><span class="depth-2-link">2차 메뉴</span></li>
+              </ul>
+            </li>
+            <li class="depth-1">
+              <span class="depth-1-link" style="cursor:pointer;" ><span>1차 메뉴</span></span>
+              <ul class="gnb-depth-2">
+                <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('mm');"><span class="depth-2-link">2차 메뉴</span></li>
+                <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('mm');"><span class="depth-2-link">2차 메뉴</span></li>
+                <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('mm');"><span class="depth-2-link">2차 메뉴</span></li>
+                <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('mm');"><span class="depth-2-link">2차 메뉴</span></li>
+              </ul>
+            </li>
+            <li class="depth-1">
+              <span class="depth-1-link" style="cursor:pointer;" ><span>1차 메뉴</span></span>
+              <ul class="gnb-depth-2">
+                <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('mm');"><span class="depth-2-link">2차 메뉴</span></li>
+                <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('mm');"><span class="depth-2-link">2차 메뉴</span></li>
+                <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('mm');"><span class="depth-2-link">2차 메뉴</span></li>
+              </ul>
+            </li>
+            <li class="depth-1">
+              <span class="depth-1-link" style="cursor:pointer;" ><span>1차 메뉴</span></span>
+              <ul class="gnb-depth-2">
+                <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('mm');"><span class="depth-2-link">2차 메뉴</span></li>
+                <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('mm');"><span class="depth-2-link">2차 메뉴</span></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
 </header>
 </html>
 

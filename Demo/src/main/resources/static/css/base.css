@@ -22,7 +22,7 @@ body {
 .header .header-gnb .depth-1 > .depth-1-link > span {position: relative; display: block; line-height: normal;}
 .header .header-gnb .depth-1 > .depth-1-link > span::before {content: ""; display: block; position: absolute; left: -2px; bottom: 0; width: 0; height: 11px; transition: all 0.5s; transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); z-index: -1; background-color: #60ccf6;}
 .header .header-gnb .depth-1.current > a > span::before {content: ""; display: block; width:calc(100% + 4px);}
-.header .header-gnb .depth-1 .depth-item {background-color: #313341; position: absolute; top: 100%; left: 0; width: 100%; height: 0; overflow: hidden; visibility: hidden; opacity: 0; transition: all 0.3s;}
+.header .header-gnb .depth-1 .depth-item {background-color: #d19ce2; position: absolute; top: 100%; left: 0; width: 100%; height: 0; overflow: hidden; visibility: hidden; opacity: 0; transition: all 0.3s;}
 .header .header-gnb .depth-1.current .depth-item {visibility: visible; opacity: 1; transition: all 0.5s;}
 .header .header-gnb .depth-1 .depth-item .gnb-depth-2 {padding: 10px 0; visibility: hidden; opacity: 0; transition: all 0.3s;}
 .header .header-gnb .depth-1.current .depth-item .gnb-depth-2 {visibility: visible; opacity: 1; transition: all 0.5s;}

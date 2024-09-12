@@ -14,6 +14,96 @@
     <th:block layout:fragment="css"></th:block>
     <th:block layout:fragment="script"></th:block>
 
+
+<script>
+$(function() {
+	console.log('document.onload()');
+	initPcNavigator();
+	initMobNavigator();
+	
+	window.addEventListener('resize', function(){
+		if (window.innerWidth > 1024) {
+			mobileGnbClose();
+		}
+	});
+})
+
+function initPcNavigator(){
+	let gnbMenus = $('.header .header-gnb .gnb-depth-1 .depth-1');
+	gnbMenus.each(function (index,item) {
+		$(item).on("mouseenter focunsin", function(event) {
+			$('.header').addClass('open');
+			$(".header-inner .header-gnb .depth-1").addClass('current');
+			let targetHeight = $(item).find(".gnb-depth-2").height();
+			$(item).find(".depth-item").height(targetHeight+15);
+		});
+		$(item).on("mouseleave focusout", function(event) {
+			$('.header').removeClass('open');
+			$(".header-inner .header-gnb .depth-1").removeClass('current');
+			$(item).find(".depth-item").height("0px");
+		});
+	});
+}
+
+function initMobNavigator(){
+	const mobileGnb = document.querySelector('.mobile-gnb');
+	let html = document.querySelector('html');
+	let sidebarButton = mobileGnb.querySelector('.sidebar-btn');
+	let mobileMenuButtons = mobileGnb.querySelectorAll('.depth-1 a');
+	
+	$('.sidebar-btn').on("click", function(event) {
+		if ($('.mobile-gnb').hasClass('open')) {
+			mobileGnbClose();
+		} else {
+			mobileGnbOpen();
+		}
+	});
+
+	$('.mobile-gnb .sidebar-wrap .sidebar .gnb-depth-1 .depth-1 .depth-1-link').each(function (index,item) {
+		$(item).on("click", function(event) {
+			event.preventDefault();
+			const button = event.target.closest('.depth-1-link');
+			if (!button) return;
+			openAccordion(button);
+		});
+	})	
+	
+	function mobileGnbOpen(){
+		$('.mobile-gnb').addClass('open');
+		$('html').addClass('not-scroll');
+	}
+	
+	function mobileGnbClose(){
+		$('.mobile-gnb').removeClass('open');
+		$('html').removeClass('not-scroll');
+	}
+	
+	// 모바일 메뉴 아코디언
+	function openAccordion($this) {
+		let target = $this.parentElement;
+		let depthTarget = $this.nextElementSibling;
+		if (!depthTarget) return;
+		let otherLinks = siblings(target);
+		let otherItems = otherLinks.map(link => link.querySelector('ul'));
+		
+		if (target.classList.contains('open')){
+			target.classList.remove('open');
+			depthTarget.style.maxHeight = '0px';
+		} else {
+			otherLinks.forEach(link => link.classList.remove('open'));
+			otherItems.forEach(item => item ? item.style.maxHeight = '0px' : '');
+			target.classList.add('open');
+			depthTarget.style.maxHeight = depthTarget.scrollHeight + 'px';
+		}
+	}
+	
+	function siblings(element) {
+		  return [...element.parentElement.children].filter(value => value != element);
+	}
+}
+
+
+</script>
 	<style th:inline="css" type="text/css">
 		.div_layout {
 			border: 1px solid black;
