@@ -19,15 +19,15 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import demo.framework.exception.DemoExceptionResolver;
-import demo.framework.filter.HjXSSFilter;
-import demo.framework.interceptor.HjInterceptor;
+import demo.framework.filter.DemoXSSFilter;
+import demo.framework.interceptor.DemoInterceptor;
 
 @Configuration
 public class DemoWebConfig implements WebMvcConfigurer {
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new HjInterceptor())
+		registry.addInterceptor(new DemoInterceptor())
 				.excludePathPatterns("/css/**", "/images/**", "/js/**");
 	}
 
@@ -63,9 +63,9 @@ public class DemoWebConfig implements WebMvcConfigurer {
 	 * @return
 	 */
     @Bean
-    FilterRegistrationBean<HjXSSFilter> filterRegistrationBean() {
-        FilterRegistrationBean<HjXSSFilter> filterRegBean = new FilterRegistrationBean<>();
-        filterRegBean.setFilter(new HjXSSFilter());
+    FilterRegistrationBean<DemoXSSFilter> filterRegistrationBean() {
+        FilterRegistrationBean<DemoXSSFilter> filterRegBean = new FilterRegistrationBean<>();
+        filterRegBean.setFilter(new DemoXSSFilter());
         filterRegBean.setOrder(3);
         filterRegBean.addUrlPatterns("*.do");
         return filterRegBean;

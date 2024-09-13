@@ -10,15 +10,15 @@ import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class HjInterceptor implements HandlerInterceptor {
+public class DemoInterceptor implements HandlerInterceptor {
 
-	private final Logger logger = LogManager.getLogger(HjInterceptor.class);
+	private final Logger logger = LogManager.getLogger(DemoInterceptor.class);
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 
-		logger.debug("========== HjInterceptor.preHandle =========="+request.getRequestURI());
+		logger.debug("========== DemoInterceptor.preHandle =========="+request.getRequestURI());
         Enumeration<?> en = request.getParameterNames();
         while(en.hasMoreElements()) {
         	String paramKey = (String) en.nextElement();            	
@@ -31,14 +31,14 @@ public class HjInterceptor implements HandlerInterceptor {
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-		logger.debug("========== HjInterceptor.postHandle ==========");
+		logger.debug("========== DemoInterceptor.postHandle =========="+modelAndView);
 		HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
 	}
 
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
-		logger.debug("========== HjInterceptor.afterCompletion ==========");
+		logger.debug("========== DemoInterceptor.afterCompletion ==========");
 		HandlerInterceptor.super.afterCompletion(request, response, handler, ex);
 	}
 

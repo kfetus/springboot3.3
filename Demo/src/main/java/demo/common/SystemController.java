@@ -24,7 +24,7 @@ public class SystemController {
 	 */
 	@RequestMapping(value="/" , method = {RequestMethod.GET, RequestMethod.POST})
 	public String welcomePage(Model model, @RequestParam HashMap<String,Object> map) throws Exception {
-		logger.debug("@@@@@@@@@@ boardList START="+model);
+		logger.debug("@@@@@@@@@@ welcomePage @@@@@@@@@@");
 		return "welcome";
 	}
 

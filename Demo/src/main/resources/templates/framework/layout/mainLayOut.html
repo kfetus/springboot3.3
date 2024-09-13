@@ -26,6 +26,22 @@ $(function() {
 			mobileGnbClose();
 		}
 	});
+
+	$.ajax({
+		type : "POST",
+		url: "/common/siteMenuList.do",
+		async : true,
+		dataType : 'json',
+		headers : {"Content-Type" : "application/json"},
+		data : JSON.stringify( {'sysGroup':'KWW'}),
+		success : function(result) {
+			console.log(result);
+		},
+		error : function(res) {
+			console.log(res.status);
+			console.log(res.responseJSON);
+		}
+	});
 })
 
 function initPcNavigator(){
