@@ -24,10 +24,15 @@ import demo.framework.interceptor.DemoInterceptor;
 
 @Configuration
 public class DemoWebConfig implements WebMvcConfigurer {
+
+	@Bean
+	DemoInterceptor demoInterceptor() {
+		return new DemoInterceptor(); 
+	}
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new DemoInterceptor())
+		registry.addInterceptor(demoInterceptor())
 				.excludePathPatterns("/css/**", "/images/**", "/js/**");
 	}
 
