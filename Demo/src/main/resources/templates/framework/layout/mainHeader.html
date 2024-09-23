@@ -57,13 +57,17 @@
             </ul>
           </div>
         </li>
-         [(${F_menuList})] -->
+         [(${F_menuList})] 
+         -->
+        
         <th:block th:each="rowData:${F_menuList}">
-        <li class="depth-1">
+        <li class="depth-1" th:if="${rowData.PARENT_URL == '/'}" >
           <span class="depth-1-link"><span>[[${rowData.MENU_NAME}]]</span></span>
-          <div class="depth-item">
+          <div class="depth-item" th:with="url=${rowData.URL}">
             <ul class="gnb-depth-2">
-              <li class="depth-2" style="cursor:pointer;" onclick="javascript:alert('dd');"><span class="depth-2-link">2차 메뉴</span></li>
+        <th:block th:each="rowData2:${F_menuList}">      
+              <li class="depth-2" style="cursor:pointer;" th:onclick="javascript:alert([[${rowData2.URL}]])" th:if="${rowData2.PARENT_URL == url}"><span class="depth-2-link">[[${rowData2.MENU_NAME}]] </span></li>
+        </th:block>      
             </ul>
           </div>
         </li>
