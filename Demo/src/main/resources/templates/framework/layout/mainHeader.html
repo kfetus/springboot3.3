@@ -13,7 +13,7 @@
 						<div class="depth-item" th:with="url=${rowData.URL}">
 							<ul class="gnb-depth-2">
 								<th:block th:each="rowData2:${F_menuList}">
-								<li class="depth-2" style="cursor: pointer;" th:onclick="javascript:alert([[${rowData2.URL}]])"	th:if="${rowData2.PARENT_URL == url}">
+								<li class="depth-2" style="cursor: pointer;" th:onclick="javascript:movePage([[${rowData2.URL}]])"	th:if="${rowData2.PARENT_URL == url}">
 									<span class="depth-2-link">[[${rowData2.MENU_NAME}]] </span>
 								</li>
 								</th:block>
@@ -36,7 +36,7 @@
 							<li class="depth-1" th:if="${rowData.PARENT_URL == '/'}"><span class="depth-1-link" style="cursor: pointer;"><span>[[${rowData.MENU_NAME}]]</span></span>
 								<ul class="gnb-depth-2" th:with="url=${rowData.URL}">
 									<th:block th:each="rowData2:${F_menuList}">
-									<li class="depth-2" style="cursor: pointer;" th:onclick="javascript:alert([[${rowData2.URL}]])" th:if="${rowData2.PARENT_URL == url}">
+									<li class="depth-2" style="cursor: pointer;" th:onclick="javascript:movePage([[${rowData2.URL}]])" th:if="${rowData2.PARENT_URL == url}">
 										<span class="depth-2-link">[[${rowData2.MENU_NAME}]]</span>
 									</li>
 									</th:block>

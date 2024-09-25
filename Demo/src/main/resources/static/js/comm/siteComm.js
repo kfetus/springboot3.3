@@ -21,11 +21,11 @@
 		let submitForm = $('#'+formId);
 		if(!g_formSubmitState) {
 			g_formSubmitState = true;
-			setTimeout(function() {
+//			setTimeout(function() {
 				submitForm.attr("onsubmit", "return true");
 				submitForm.submit();
 				submitForm.attr("onsubmit", "return false");
-			},1000);
+//			},1000);
 		} else {
 			alert('이미 submit 되었습니다.');
 		}

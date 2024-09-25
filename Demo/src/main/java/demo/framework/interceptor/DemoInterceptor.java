@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StopWatch;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -24,6 +25,8 @@ public class DemoInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
+        StopWatch swatch = new StopWatch();
+        swatch.start();
 
 		logger.debug("========== DemoInterceptor.preHandle =========="+request.getRequestURI());
         Enumeration<?> en = request.getParameterNames();
@@ -31,7 +34,7 @@ public class DemoInterceptor implements HandlerInterceptor {
         	String paramKey = (String) en.nextElement();            	
         	logger.debug("key : " + paramKey +";value="+request.getParameter(paramKey));
         }
-        
+        request.setAttribute("_timeCheck", swatch);
 		return true;
 	}
 
@@ -39,6 +42,11 @@ public class DemoInterceptor implements HandlerInterceptor {
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
 		logger.debug("========== DemoInterceptor.postHandle ==========");
+		
+		StopWatch swatch = ((StopWatch)request.getAttribute("_timeCheck"));
+		swatch.stop();
+		logger.debug("========== 실행 시간 ==========" + swatch.prettyPrint());
+		request.removeAttribute("_timeCheck");
 		
 		//권한 및 사이트에 따른 메뉴 구조 로딩해서 셋팅하기. 공통에서 처리 할 부분
 		HashMap<String,String> map = new HashMap<>();
