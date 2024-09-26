@@ -85,6 +85,7 @@
 			, LOGIN_IP
 			, LOGIN_BROWSER
 			, LOGIN_DEVICE
+			, SESSION_ID
 			, LOGIN_DT
 			)
 		VALUES(
@@ -92,6 +93,7 @@
 			, #{userIp}
 			, #{loginBrowser}
 			, #{loginDevice}
+			, #{sessionId}
 			, CURRENT_TIMESTAMP()
 			)
 	</insert> 

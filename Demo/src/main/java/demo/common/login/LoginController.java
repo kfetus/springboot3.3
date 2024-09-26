@@ -115,7 +115,7 @@ public class LoginController {
 		param.put("userIp", getClientIp(req));
 		param.put("loginBrowser", getClientBrowser(req));
 		param.put("loginDevice", getClientAccessDevice(req));
-
+		param.put("sessionId", req.getSession().getId());
 		logger.debug("@@@@@@@@@@ insertLoginHist="+param);
 		int result = loginService.insertLoginHist(param);
 		return result;
