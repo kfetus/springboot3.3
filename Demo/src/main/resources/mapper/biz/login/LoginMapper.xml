@@ -78,6 +78,25 @@
 		WHERE USER_NO = #{userNo}
 	</update>
 	
+	<insert id="insertLoginHist" parameterType="java.util.HashMap" >
+		INSERT /* LoginMapper.insertLoginHist 로그인 내역 Insert */
+		INTO LOGIN_HIST(
+			USER_NO
+			, LOGIN_IP
+			, LOGIN_BROWSER
+			, LOGIN_DEVICE
+			, LOGIN_DT
+			)
+		VALUES(
+			#{userNo}
+			, #{userIp}
+			, #{loginBrowser}
+			, #{loginDevice}
+			, CURRENT_TIMESTAMP()
+			)
+	</insert> 
+
+
 	<!-- resultMap id="userVoTest" type="base.vo.UserVO">
 		<result column="user_id" property="id" jdbcType="NVARCHAR" javaType="String"/>
 		<result column="user_name" property="username" jdbcType="NVARCHAR" javaType="String"/>

@@ -28,7 +28,6 @@ public class DemoInterceptor implements HandlerInterceptor {
         StopWatch swatch = new StopWatch();
         swatch.start();
 
-        
         logger.debug("========== request.getRemoteAddr()=>"+request.getRemoteAddr());
         Enumeration<?> en1 = request.getHeaderNames();
         while(en1.hasMoreElements()) {
