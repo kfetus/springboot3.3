@@ -65,7 +65,7 @@ public class LoginController {
 		vo.setUserPass(map.get("loginPass"));
 		
 		UserVO vo2 = loginService.selectOneUserVo(vo);
-		logger.debug("@@@@@@@@@@@ restLogin after="+vo2);
+		logger.debug("@@@@@@@@@@@ userLogin after="+vo2);
 		
 		if( vo2 == null) {
 			retMap.put("RESCODE",bizNoUser);
@@ -123,36 +123,27 @@ public class LoginController {
 	
 	
 	public String getClientIp(HttpServletRequest req) {
-		String clientIp = req.getHeader("X-Forwarded-For");
-		logger.debug("@@@@@@@@@@ X-FORWARDED-FOR=" + clientIp);
-		if (clientIp == null) {
-			clientIp = req.getHeader("Proxy-Client-IP");
-			logger.debug("@@@@@@@@@@ Proxy-Client-IP=" + clientIp);
-		}
-		if (clientIp == null) {
-			clientIp = req.getHeader("WL-Proxy-Client-IP");
-			logger.debug("@@@@@@@@@@ WL-Proxy-Client-IP=" + clientIp);
-		}
-		if (clientIp == null) {
-			clientIp = req.getHeader("HTTP_CLIENT_IP");
-			logger.debug("@@@@@@@@@@ HTTP_CLIENT_IP=" + clientIp);
-		}
-		if (clientIp == null) {
-			clientIp = req.getHeader("HTTP_X_FORWARDED_FOR");
-			logger.debug("@@@@@@@@@@ HTTP_X_FORWARDED_FOR=" + clientIp);
-		}
-		if (clientIp == null) {
-			clientIp = req.getRemoteAddr();
-			logger.debug("@@@@@@@@@@ getRemoteAddr="+clientIp);
-		}
-		logger.debug("@@@@@@@@@@ client IP="+clientIp);
+		logger.debug("@@@@@@@@@@ client IP info={} {} {} {} {} {}",req.getHeader("X-Forwarded-For"),req.getHeader("Proxy-Client-IP")
+				,req.getHeader("WL-Proxy-Client-IP"),req.getHeader("HTTP_CLIENT_IP"),req.getHeader("HTTP_X_FORWARDED_FOR"),req.getRemoteAddr());
 		
-		return clientIp;
+		if ( req.getHeader("X-Forwarded-For") != null) {
+			return req.getHeader("X-Forwarded-For");
+		} else if (req.getHeader("Proxy-Client-IP") != null) {
+			return req.getHeader("Proxy-Client-IP");
+		} else if (req.getHeader("WL-Proxy-Client-IP") != null) {
+			return req.getHeader("WL-Proxy-Client-IP");
+		} else if ( req.getHeader("HTTP_CLIENT_IP") != null ) {
+			return req.getHeader("HTTP_CLIENT_IP");
+		} else if (req.getHeader("HTTP_X_FORWARDED_FOR") != null) {
+			return req.getHeader("HTTP_X_FORWARDED_FOR");
+		} else {
+			return req.getRemoteAddr();
+		} 
 	}
 	
 	public String getClientBrowser(HttpServletRequest req) {
 		String agent = req.getHeader("User-Agent");
-		String cBrowser = null;
+		String cBrowser = "not Judge";
 		if (agent != null) {
 			if (agent.indexOf("Trident") > -1) {
 				cBrowser = "MSIE";
@@ -173,7 +164,7 @@ public class LoginController {
 	
 	public String getClientAccessDevice(HttpServletRequest req) {
 		String mobileType[] = {"iphone","ipod","android","windows ce","blackberry","symbian","windows phone","webos","opera mini","opera mobi","polaris","iemobile","lgtelecom","nokia","sonyericsson","lg","samsung"};
-		String aDevice = "";
+		String aDevice = "not Judge";
 		
 		for(String loopData : mobileType){
 			if ( req.getHeader("User-Agent").toLowerCase().indexOf(loopData) != -1) {
