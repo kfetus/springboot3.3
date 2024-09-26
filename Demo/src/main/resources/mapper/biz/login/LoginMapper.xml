@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="demo.common.login.LoginMapper">
+	<select id="selectOneUserVo" parameterType="demo.common.vo.UserVO" resultType="demo.common.vo.UserVO">
+		SELECT A.USER_NO /* LoginMapper.selectOneUserVo 사용자 조회 */
+			, A.USER_ID
+			, A.USER_PASS
+			, A.SALT
+			, A.USER_NAME
+			, A.USER_IP
+			, A.DESCRIP
+			, A.GRADE
+			, A.REG_DT
+			, A.CNG_DT 
+			, B.HP_NO
+			, B.EMAIL
+			, B.ZONE_CODE
+			, B.ROAD_ADDR
+			, B.JIBUN_ADDR
+			, B.DETAIL_ADDR
+		FROM login_info A INNER JOIN user_info B ON A.USER_NO = B.USER_NO
+	   WHERE USER_ID = #{userId}
+<!-- 단방향 암호화. java에서 확인 필요		 AND USER_PASS = #{userPass} -->
+	</select>
+
+    <select id="selectListUserVo" resultType="demo.common.vo.UserVO">
+		SELECT USER_NO
+			, USER_NAME
+			, USER_IP
+			, DESCRIP
+			, GRADE
+			, REG_DT
+			, CNG_DT 
+		  FROM LOGIN_INFO
+    </select>
+
+	<insert id="insertLoginInfoOne" parameterType="demo.common.vo.UserVO" >
+		<selectKey resultType="int" keyProperty="userNo" keyColumn="USER_NO" order="BEFORE">
+			SELECT nextval(USER_SEQ)
+		</selectKey>
+
+		INSERT /* LoginMapper.insertLoginInfoOne 사용자 정보 ID,PASS Insert */
+		INTO LOGIN_INFO(
+			USER_NO
+			, USER_ID
+			, USER_PASS
+			, SALT
+			, USER_NAME
+			, USER_IP
+			, DESCRIP
+			, GRADE
+			, REG_DT
+			, CNG_DT
+			)
+		VALUES(
+			#{userNo}
+			, #{userId}
+			, #{userPass}
+			, #{salt}
+			, #{userName}
+			, #{userIp}
+			, #{descrip}
+			, #{grade}
+			, CURRENT_TIMESTAMP()
+			, CURRENT_TIMESTAMP()
+			)
+	</insert> 
+
+
+	<update id="updateLoginInfoOne" parameterType="demo.common.vo.UserVO">
+		UPDATE LOGIN_INFO /* LoginMapper.updateLoginInfoOne 사용자 정보 Update */
+		SET    USER_PASS = #{userPass}
+			   , SALT = #{salt}
+			   , USER_NAME  = #{userName}
+		       , USER_IP = #{userIp}
+		       , GRADE = #{grade}
+		WHERE USER_NO = #{userNo}
+	</update>
+	
+	<!-- resultMap id="userVoTest" type="base.vo.UserVO">
+		<result column="user_id" property="id" jdbcType="NVARCHAR" javaType="String"/>
+		<result column="user_name" property="username" jdbcType="NVARCHAR" javaType="String"/>
+		<result column="hashed_password" property="hashedPassword" jdbcType="NVARCHAR" javaType="String"/>
+	</resultMap>
+	
+	<select id="selectUsers" resultMap="userVoTest">
+		select user_id, user_name, hashed_password
+		from some_table
+		where id = #{id}
+	</select-->
+</mapper>
