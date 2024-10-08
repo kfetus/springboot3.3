@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="demo.biz.member.MemberMapper">
+
+	<select id="selectUserInfoOne" parameterType="String" resultType="demo.common.vo.UserVO">
+		SELECT A.USER_NO /* MemberMapper.selectUserInfoOne 사용자 정보 상세 조회 */
+			, B.USER_ID 
+			, B.USER_NAME
+			, B.USER_IP
+			, B.DESCRIP
+			, B.GRADE 
+			, B.REG_DT
+			, B.CNG_DT 
+			, A.HP_NO
+			, A.EMAIL
+			, A.ZONE_CODE
+			, A.ROAD_ADDR
+			, A.JIBUN_ADDR
+			, A.DETAIL_ADDR
+		FROM user_info A INNER JOIN login_info B ON A.USER_NO = B.USER_NO
+		WHERE A.USER_NO =  #{userNo}
+	</select>
+    
+	<insert id="insertUserInfoOne" parameterType="demo.common.vo.UserVO">
+		INSERT /* MemberMapper.insertUserInfoOne 사용자 정보 Insert */
+		INTO USER_INFO(
+			USER_NO
+			, HP_NO
+			, EMAIL
+			, ZONE_CODE
+			, ROAD_ADDR
+			, JIBUN_ADDR
+			, DETAIL_ADDR
+			, REG_ID
+			, REG_DT
+			, CNG_DT
+			)
+		VALUES(
+			 #{userNo}
+			, #{hpNo}
+			, #{email}
+			, #{zoneCode}
+			, #{roadAddr}
+			, #{jibunAddr}
+			, #{detailAddr}
+			, #{regId}
+			, CURRENT_TIMESTAMP()
+			, CURRENT_TIMESTAMP()
+			)
+	</insert>    
+
+	<update id="updateUserInfoOne" parameterType="demo.common.vo.UserVO">
+		UPDATE USER_INFO /* MemberMapper.updateUserInfoOne 사용자 정보 Update */
+		SET    HP_NO = #{hpNo}
+			   , EMAIL = #{email}
+			   , ZONE_CODE  = #{zoneCode}
+		       , ROAD_ADDR = #{roadAddr}
+		       , JIBUN_ADDR = #{jibunAddr}
+		       , DETAIL_ADDR = #{detailAddr}
+		       , CNG_USER_NO = #{userNo}
+		       , CNG_DT = CURRENT_TIMESTAMP()
+		WHERE USER_NO = #{userNo}
+	</update>
+	
+	<delete id="deleteUserInfoOne">
+		DELETE FROM USER_INFO /* MemberMapper.deleteUserInfoOne 사용자 정보 Delete */
+		WHERE  USER_NO = #{userNo}
+	</delete>	
+</mapper>

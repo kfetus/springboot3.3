@@ -35,6 +35,12 @@
 		  FROM LOGIN_INFO
     </select>
 
+	<select id="checkDupIdOne" parameterType="demo.common.vo.UserVO" resultType="int">
+		SELECT COUNT(A.USER_ID) CNT /* LoginMapper.checkDupIdOne 아이디 중복 조회 */
+			FROM login_info A 
+		  WHERE USER_ID = #{userId} 
+	</select>
+
 	<insert id="insertLoginInfoOne" parameterType="demo.common.vo.UserVO" >
 		<selectKey resultType="int" keyProperty="userNo" keyColumn="USER_NO" order="BEFORE">
 			SELECT nextval(USER_SEQ)

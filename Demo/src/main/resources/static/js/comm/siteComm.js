@@ -144,3 +144,24 @@
 		}
 
 	}
+
+	//input창에 숫자만 입력
+	function inputOnlyNum(event) {
+		if(event.key >= 0 && event.key <= 9) {
+			return true;
+		}
+		return false;
+	}
+	
+	//input창에 숫자,- 만 입력
+	function inputOnlyAccType(event) {
+		if(event.key === '-' || event.key >= 0 && event.key <= 9) {
+			return true;
+		}
+		return false;
+	}
+	//input에 한글 금지. ime 모드 때문에 한글을 계속 입력하면 기존값이 지워지는 현상이 발생. 현재는 막는 방법을 못참음
+	function inputNoKorean(t) {
+		const regExp = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g;
+		t.value = t.value.replace(regExp, '' )
+	}

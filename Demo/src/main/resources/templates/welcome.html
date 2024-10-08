@@ -37,6 +37,9 @@
 		
 	}
 	
+	const joinUs = () => {
+		location.href = "/member/joinUsForm.do";
+	}
 	</script>
 </th:block>
 	
@@ -45,6 +48,7 @@
 	<span>아이디 : <input type="text" name="loginId" id="loginId" /></span><br>
 	<span>패스 : <input type="password" name="loginPass" id="loginPass" onkeyup="if(window.event.keyCode==13){login()}" /></span>
 	<div>
-		<button type="button" id="saveBtn" onclick="javascript:login();"><span>안녕</span></button>
+		<button type="button" id="saveBtn" onclick="javascript:login();"><span>로그인</span></button>
+		<button type="button" id="saveBtn" onclick="javascript:joinUs();"><span>회원가입</span></button>
 	</div>
 </div>

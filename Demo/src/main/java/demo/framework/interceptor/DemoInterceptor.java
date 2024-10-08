@@ -1,6 +1,5 @@
 package demo.framework.interceptor;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class DemoInterceptor implements HandlerInterceptor {
 			throws Exception {
         StopWatch swatch = new StopWatch();
         swatch.start();
-
+/*
         logger.debug("========== request.getRemoteAddr()=>"+request.getRemoteAddr());
         Enumeration<?> en1 = request.getHeaderNames();
         while(en1.hasMoreElements()) {
@@ -41,6 +40,7 @@ public class DemoInterceptor implements HandlerInterceptor {
         	String paramKey = (String) en.nextElement();            	
         	logger.debug("key : " + paramKey +";value="+request.getParameter(paramKey));
         }
+*/        
         request.setAttribute("_timeCheck", swatch);
 		return true;
 	}
