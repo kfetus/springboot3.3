@@ -104,11 +104,11 @@ public class MemberController {
 			return retMap;
 		}
 
-//		if (!StringUtils.hasText(vo.getHpNo()) ) {
-//			retMap.put("RESCODE",validationNullCode);
-//			retMap.put("RESMSG","휴대전화 정보가 없습니다.");
-//			return retMap;
-//		}
+		if (!StringUtils.hasText(vo.getHpNo()) ) {
+			retMap.put("RESCODE",validationNullCode);
+			retMap.put("RESMSG","휴대전화 정보가 없습니다.");
+			return retMap;
+		}
 
 		vo.setUserIp(HttpUtil.getClientIp(req));
 		logger.debug("@@@@@@@@@@@ insertUserInfoOne insert data=" + vo.toString());

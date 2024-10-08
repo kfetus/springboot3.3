@@ -161,7 +161,8 @@
 		return false;
 	}
 	//input에 한글 금지. ime 모드 때문에 한글을 계속 입력하면 기존값이 지워지는 현상이 발생. 현재는 막는 방법을 못참음
-	function inputNoKorean(t) {
+	function inputNoKorean(t,event) {
+		console.log(event);
 		const regExp = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g;
-		t.value = t.value.replace(regExp, '' )
+		t.value = t.value.replace(regExp, '' );
 	}

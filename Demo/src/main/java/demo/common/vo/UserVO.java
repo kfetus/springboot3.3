@@ -17,7 +17,8 @@ public class UserVO {
 	private String roadAddr;
 	private String jibunAddr;
 	private String detailAddr;
-	private String regId;
+	private int cngUserNo;
+	
 	public String getUserId() {
 		return userId;
 	}
@@ -102,18 +103,18 @@ public class UserVO {
 	public void setDetailAddr(String detailAddr) {
 		this.detailAddr = detailAddr;
 	}
-	public String getRegId() {
-		return regId;
+	public int getCngUserNo() {
+		return cngUserNo;
 	}
-	public void setRegId(String regId) {
-		this.regId = regId;
+	public void setCngUserNo(int cngUserNo) {
+		this.cngUserNo = cngUserNo;
 	}
 	@Override
 	public String toString() {
 		return "UserVO [userId=" + userId + ", userPass=" + userPass + ", salt=" + salt + ", userName=" + userName
 				+ ", userNo=" + userNo + ", userIp=" + userIp + ", descrip=" + descrip + ", grade=" + grade + ", hpNo="
 				+ hpNo + ", email=" + email + ", zoneCode=" + zoneCode + ", roadAddr=" + roadAddr + ", jibunAddr="
-				+ jibunAddr + ", detailAddr=" + detailAddr + ", regId=" + regId + "]";
+				+ jibunAddr + ", detailAddr=" + detailAddr + ", cngUserNo=" + cngUserNo + "]";
 	}
 
 }

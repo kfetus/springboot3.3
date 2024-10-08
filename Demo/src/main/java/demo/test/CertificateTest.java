@@ -27,6 +27,7 @@ import java.io.File;
 public class CertificateTest {
 
 	public static void main(String[] args) throws Exception {
+		
 		String msg = "하늘에는 달이 없고, 땅에는 바람이 없습니다.\n사람들은 소리가 없고, 나는 마음이 없습니다.\n\n우주는 죽음인가요.\n인생은 잠인가요.";
 		PublicKey publicKey = getPublicKey("C:/signCert.der");
 		PrivateKey privateKey = getPrivateKey("C:/signPri.key");

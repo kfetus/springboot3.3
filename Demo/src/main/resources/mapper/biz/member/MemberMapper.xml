@@ -32,7 +32,7 @@
 			, ROAD_ADDR
 			, JIBUN_ADDR
 			, DETAIL_ADDR
-			, REG_ID
+			, CNG_USER_NO
 			, REG_DT
 			, CNG_DT
 			)
@@ -44,7 +44,7 @@
 			, #{roadAddr}
 			, #{jibunAddr}
 			, #{detailAddr}
-			, #{regId}
+			, #{userNo}
 			, CURRENT_TIMESTAMP()
 			, CURRENT_TIMESTAMP()
 			)

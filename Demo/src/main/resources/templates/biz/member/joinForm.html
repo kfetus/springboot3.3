@@ -66,19 +66,20 @@
 				$('#userName').focus();
 				return;
 			}
-/*
+
 			if( !$('#hpNo').val() ) {
 				alert('핸드폰번호 입력');
 				$('#hpNo').focus();
 				return;
 			}
-*/
+
+/*
 			if( !$('#grade').val() ) {
 				alert('역활 선택');
 				$('#grade').focus();
 				return;
 			}
-			
+*/			
 			if( 'Y' != $('#checkStatus').val() ) {
 				alert('중복체크부터 하시요');
 				$('#userId').focus();
@@ -178,21 +179,21 @@
 			<ul style="list-style: none;">
 				<li>
 					<label for="userId">ID</label> 
-					<input type="text" name="userId" id="userId" placeholder="ID" oninput="javascript: inputNoKorean(this,event);">
+					<input type="text" name="userId" id="userId" placeholder="ID" oninput="javascript: inputNoKorean(this,event);" maxlength='30'>
 					<input type="hidden" name="checkStatus" id="checkStatus" value="">
 					<button type="button" id="checkBtn"	onclick="javascript:dupCheck();"><strong>중복체크</strong></button>
 				</li>
 				<li>
 					<label for="userPass">password</label> 
-					<input type="password" name="userPass" id="userPass">
+					<input type="password" name="userPass" id="userPass" maxlength='20'>
 				</li>
 				<li>
 					<label for="userName">이름</label> 
-					<input type="text" name="userName" id="userName" placeholder="이름" oninput="inputEng(event)">
+					<input type="text" name="userName" id="userName" placeholder="이름" maxlength='15'>
 				</li>
 				<li>
 					<label for="hpNo">휴대폰번호</label> 
-						<input type="text" name="hpNo" id="hpNo" placeholder="-없이 입력" onkeypress='return inputOnlyNum(event)'>
+						<input type="text" name="hpNo" id="hpNo" placeholder="-없이 입력" onkeypress='return inputOnlyNum(event)' maxlength='11'>
 				</li>
 				<!-- li>
 					<label for="grade">역활</label> 
@@ -211,25 +212,25 @@
 			<ul style="list-style: none;">
 				<li>
 					<label for="email">이메일주소</label> 
-					<input type="text" name="email" id="email">
+					<input type="text" name="email" id="email" maxlength='30'>
 				</li>
 				<li>
 					<label for="zoneCode">우편번호</label> 
-					<input type="text" name="zoneCode" id="zoneCode">
+					<input type="text" name="zoneCode" id="zoneCode" maxlength='8'>
 					<button type="button" onclick="javascript:daumPostCode();">검색</button>
 				</li>
 				<li>
 					<label for="roadAddr">도로명주소</label> 
-					<input type="text" name="roadAddr" id="roadAddr">
+					<input type="text" name="roadAddr" id="roadAddr" maxlength='100'>
 				</li>
 				<li>
 					<label for="detailAddr">상세주소</label> 
-					<input type="text" name="detailAddr" id="detailAddr">
+					<input type="text" name="detailAddr" id="detailAddr" maxlength='100'>
 				</li>
 			</ul>
 		</fieldset>
 	</div>
-	<div style="float: right">
+	<div style="margin: 11px; text-align: right;">
 		<button type="button" onclick="javascript:joinUs();">
 			<strong>가입</strong>
 		</button>

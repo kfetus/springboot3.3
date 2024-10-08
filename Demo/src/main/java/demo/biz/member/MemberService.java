@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import demo.common.login.LoginMapper;
 import demo.common.util.crypto.Sha256Crypto;
@@ -37,8 +36,8 @@ public class MemberService {
 		vo.setUserPass(Sha256Crypto.encSah256(vo.getUserPass(), salt));
 		
 		loginMapper.insertLoginInfoOne(vo);
-		if( !StringUtils.hasText(vo.getRegId()) ) {
-			vo.setRegId("2");
+		if( vo.getCngUserNo() == 0 ) {//초기화 값이 없으면 기본 0 셋팅됨
+			vo.setCngUserNo(vo.getUserNo());
 		}
 		logger.debug("@@@@@@@@@@@@@ insertUserInfoOne login insert ");
 		int result = memberMapper.insertUserInfoOne(vo);
