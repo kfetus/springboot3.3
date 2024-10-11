@@ -26,6 +26,7 @@ public class DemoInterceptor implements HandlerInterceptor {
 			throws Exception {
         StopWatch swatch = new StopWatch();
         swatch.start();
+		logger.debug("========== DemoInterceptor.preHandle =========="+request.getRequestURI());
 /*
         logger.debug("========== request.getRemoteAddr()=>"+request.getRemoteAddr());
         Enumeration<?> en1 = request.getHeaderNames();
@@ -34,7 +35,7 @@ public class DemoInterceptor implements HandlerInterceptor {
         	logger.debug("header key : " + paramKey +";value="+request.getHeader(paramKey));
         }
         
-		logger.debug("========== DemoInterceptor.preHandle =========="+request.getRequestURI());
+
         Enumeration<?> en = request.getParameterNames();
         while(en.hasMoreElements()) {
         	String paramKey = (String) en.nextElement();            	

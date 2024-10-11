@@ -10,7 +10,6 @@ import demo.common.login.LoginMapper;
 import demo.common.util.crypto.Sha256Crypto;
 import demo.common.vo.UserVO;
 
-@Transactional
 @Service
 public class MemberService {
 
@@ -28,6 +27,7 @@ public class MemberService {
 		return cnt;
 	}
 	
+	@Transactional
 	public int insertUserInfoOne(UserVO vo) throws Exception {
 		logger.debug("@@@@@@@@@@@@@ insertUserInfoOne data=" + vo.toString());
 		
