@@ -27,6 +27,8 @@ public class DemoInterceptor implements HandlerInterceptor {
         StopWatch swatch = new StopWatch();
         swatch.start();
 		logger.debug("========== DemoInterceptor.preHandle =========="+request.getRequestURI());
+		//이 값은 spring에서 request를 받을때 정상 요청인지 에러 요청인지 판단을 주로 하는데 thymeleaf에서 Layout을 사용하면 에러가 발생해도 값이 INCLUDE로 와서 처리가 불가함.
+		logger.debug("========== DemoInterceptor.preHandle getDispatcherType()=========="+request.getDispatcherType());
 /*
         logger.debug("========== request.getRemoteAddr()=>"+request.getRemoteAddr());
         Enumeration<?> en1 = request.getHeaderNames();
@@ -65,10 +67,14 @@ public class DemoInterceptor implements HandlerInterceptor {
 		HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
 	}
 
+	/**
+	 * view(현재 Thymeleaf)에서 에러 발생 시 로그 쌓기. view 에러가 밠생하면 처리 불가능함.
+	 */
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
 		logger.debug("========== DemoInterceptor.afterCompletion ==========");
+        logger.debug("exception=>"+ex);
 		HandlerInterceptor.super.afterCompletion(request, response, handler, ex);
 	}
 
