@@ -1,4 +1,4 @@
-package demo.common;
+package demo.framework.system;
 
 public class SystemConstant {
 

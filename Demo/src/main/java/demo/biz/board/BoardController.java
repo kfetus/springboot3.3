@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import demo.common.SystemConstant;
 import demo.common.code.CodeService;
+import demo.framework.system.SystemConstant;
 
 @Controller
 @RequestMapping("/board")
