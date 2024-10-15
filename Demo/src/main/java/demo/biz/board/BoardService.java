@@ -37,4 +37,9 @@ public class BoardService {
 		List<HashMap<String,String>> result = boardMapper.selectBoardOneCommemtList(seq);
 		return result;
 	}
+	
+	public HashMap<String,Object> selectBoardFileOne(HashMap<String,String> map) throws Exception {
+		HashMap<String,Object> result = boardMapper.selectBoardFileOne(map);
+		return result;
+	}	
 }

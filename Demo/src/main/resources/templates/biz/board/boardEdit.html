@@ -15,9 +15,36 @@
 
 	}	
 
+	const fileDown = (seq, fileSeq, fileName) => {
+		console.log(seq+'='+fileSeq+'='+fileName);
+		$.ajax({
+			type : 'GET',
+			url : '/board/blobFiledown.do',
+			data : { 'seq':seq,'fileSeq':fileSeq },
+			xhrFields: {
+				responseType: "blob",
+			},
+			success : function(result) {
+				//The file at 'url주소' was loaded over an insecure connection. This file should be served over HTTPS. 이런 에러가 나는데 다운로드에는 상관 없음. 보안 이슈라는데 이미 받은 파일인데 왜?
+				const url = window.URL.createObjectURL(result);
+	            const link = document.createElement('a');
+	            link.href = url;
+	            link.download=fileName;
+	            link.click();
+	            URL.revokeObjectURL(url);
+	            link.remove();
+			},
+			error : function(request, status, error) {
+				console.log(request);
+				console.log(status);
+				console.log(error);
+			}
+		});
+	}
+	
 	const moveList = () => {
 		$("#mainForm").attr("action", "/board/boardList.do");
-		gfn_submit('mainForm');		
+		gfn_submit('mainForm');
 	}
 	
 	$(function() {
@@ -47,8 +74,9 @@
 			<textarea name="bodyText" id="bodyText" cols="54" rows="10" placeholder="내용입력" th:text="${boardData?.BODY_TEXT}"></textarea>
 		</div>
 		<div th:if="${not #strings.isEmpty(boardData?.FILE_NAME)}">
-			<span>첨부파일 명 :</span><span th:text="${boardData?.FILE_NAME}"></span><br>
-			<span>크기:</span><span th:text="${boardData?.FILE_SIZE}"></span><span>Byte</span>
+			<!-- span>첨부파일 명 :</span><a href="#" th:text="${boardData?.FILE_NAME}" th:onclick="'javascript:fileDown('+ ${boardData?.FILE_SEQ} + ','+${boardData?.SEQ}+');'" ></a><br-->
+			<span>첨부파일 명 :</span><a href="#" th:text="${boardData?.FILE_NAME}" th:href="@{/board/blobFiledown.do (seq=${boardData?.SEQ},fileSeq=${boardData?.FILE_SEQ})}" ></a><br>
+			<span>크기:</span><span th:text="${boardData?.FILE_SIZE}" ></span><span th:onclick="fileDown([[${boardData?.SEQ}]],[[${boardData?.FILE_SEQ}]],[[${boardData?.FILE_NAME}]]);" style="cursor: pointer;">Byte</span>
 		</div>
 		<div th:if="${#strings.isEmpty(boardData?.FILE_NAME)}">
 			<label for="srcAddFile">첨부파일</label>

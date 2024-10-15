@@ -1,16 +1,19 @@
 package demo.biz.board;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.mariadb.jdbc.MariaDbBlob;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import demo.common.code.CodeService;
 import demo.framework.system.SystemConstant;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/board")
@@ -125,6 +129,34 @@ public class BoardController {
 		logger.debug("@@@@@@@@@@ boardEdit END="+model);
 		return "biz/board/boardEdit";
 	}
+
 	
+	/**
+	 * 
+	 * @설명 : DB BLOB 파일 다운로드
+	 * @param map
+	 * @param response
+	 * @throws Exception
+	 */
+	@GetMapping(value = "/blobFiledown.do")
+	public void blobFiledown(@RequestParam HashMap<String, String> map, HttpServletResponse response) throws Exception {
+		logger.debug("@@@@@@@@@@@ blobFiledown 시작=" + map);
+
+		HashMap<String, Object> resultData = boardService.selectBoardFileOne(map);
+		logger.debug("@@@@@@@@@@@ selectBoardFileOne DB 조회 결과=" + resultData);
+
+		MariaDbBlob mb = (MariaDbBlob)resultData.get("FILE_DATA");
+		byte[] fileData = mb.getBytes(1, (int) mb.length());
+	    String fileName = (String)resultData.get("FILE_NAME");
+	    
+	    
+        response.setContentType("application/octet-stream");//MediaType.APPLICATION_OCTET_STREAM_VALUE
+        response.setContentLength(fileData.length);
+        response.setHeader("Content-Disposition", "attachment; fileName=\"" + URLEncoder.encode(fileName,"UTF-8")+"\";");//HttpHeaders.CONTENT_DISPOSITION
+        response.setHeader("Content-Transfer-Encoding", "binary");
+        response.getOutputStream().write(fileData);
+        response.getOutputStream().flush();
+        response.getOutputStream().close();
+	}
 	
 }
