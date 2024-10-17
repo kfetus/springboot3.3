@@ -16,6 +16,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,6 +47,13 @@ public class BoardController {
     @Value("${code.success}")
     private String successCode;	
 	
+    @Value("${code.biz.noAuthority}")
+    private String noAuthority;
+    
+    @Value("${code.biz.defaultException}")
+    private String defaultException;
+    
+    
 	@Autowired
 	private SessionManager sessionManager;	
 	
@@ -172,7 +180,7 @@ public class BoardController {
 
 	@ResponseBody
 	@PostMapping(value = "/insertBoardOne.do")
-	public Map<String, Object> insertBoardOne(@RequestParam(value="srcTitle", required=false) String srcTitle,
+	public Map<String, Object> insertBoardOne(@RequestParam(value="srcTitle") String srcTitle,
 			@RequestParam(value="bodyText", required=false) String bodyText,
 			@RequestParam(value="category", required=false) String category,
 			@RequestPart(value="multiFiles", required=false) MultipartFile multiFiles, HttpServletRequest req) throws Exception {
@@ -209,11 +217,54 @@ public class BoardController {
 		
 		int result = boardService.insertBoard(map);
 
-		retMap.put("RESCODE", "0000");
+		retMap.put("RESCODE", successCode);
 		retMap.put("RESMSG", "");
 		retMap.put("RESULT_CNT", result);
 
 		logger.debug("@@@@@@@@@@@ insertBoardOne 종료" + retMap);
 		return retMap;
 	}
+
+	@ResponseBody
+	@PostMapping("/boardDeleteOne.do")
+	public Map<String, Object> boardDeleteOne(@RequestBody HashMap<String,String> map, HttpServletRequest req) throws Exception {
+		logger.debug("@@@@@@@@@@ boardDeleteOne START="+map);
+		Map<String, Object> retMap = new HashMap<String, Object>();
+
+		UserVO vo = sessionManager.getUserInfo(req);
+		if (vo == null) {
+			retMap.put("RESCODE", "9998");
+			retMap.put("RESMSG", "로그인 정보가 없습니다.");
+			return retMap;
+		} else {
+			map.put("userNo", String.valueOf(vo.getUserNo()));
+		}
+		
+		String seq = map.get("seq");
+		HashMap<String, String> resultData = boardService.selectBoardOne(seq);
+		
+		logger.debug("@@@@@@@@@@@ deleteBoardOne resultData=" + resultData);
+		
+		String boardOwnerNo = String.valueOf(resultData.get("CNG_USER_NO"));
+		int tempUserNo = Integer.parseInt(boardOwnerNo);
+		if (tempUserNo != vo.getUserNo()) {
+			retMap.put("RESCODE", noAuthority);
+			retMap.put("RESMSG", "삭제 권한이 없습니다.");
+			return retMap;
+		}
+		
+		int result = boardService.deleteBoard(seq);
+		
+		if(result == 1) {
+			retMap.put("RESCODE", successCode);
+			retMap.put("RESMSG", "");
+		} else {
+			retMap.put("RESCODE", defaultException);
+			retMap.put("RESMSG", "삭제에 실패하였습니다.");
+		}
+		
+		logger.debug("@@@@@@@@@@ boardDeleteOne END="+retMap);
+		return retMap;
+	}
+
 }

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -44,6 +45,7 @@ public class BoardService {
 		return result;
 	}
 	
+	@Transactional
 	public int insertBoard(HashMap<String,Object> map) throws Exception {
 		
 		boardMapper.insertBoardOne(map);
@@ -71,6 +73,13 @@ public class BoardService {
 			
 			boardMapper.insertBoardFile(fileMap);
 		}
+		return result;
+	}
+	
+	@Transactional
+	public int deleteBoard(String seq) throws Exception {
+		int result = boardMapper.deleteBoardOne(seq);
+		boardMapper.deleteBoardFile(seq);
 		return result;
 	}
 }

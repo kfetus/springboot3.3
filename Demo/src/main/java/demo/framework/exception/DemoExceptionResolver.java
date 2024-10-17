@@ -34,11 +34,13 @@ public class DemoExceptionResolver implements HandlerExceptionResolver {
 		reqException.printStackTrace();
 		
 		String reqAccept = request.getHeader("accept");
+		String reqContentType = request.getHeader("content-type");
 		logger.debug("==========req accept=" + reqAccept);
+		logger.debug("==========req reqContentType=" + reqContentType);
 		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
 		try {
-			if (  reqAccept.indexOf(MediaType.APPLICATION_JSON_VALUE) > -1 ) {
+			if ( reqAccept.indexOf(MediaType.APPLICATION_JSON_VALUE) > -1 || reqContentType.indexOf(MediaType.APPLICATION_JSON_VALUE) > -1 ) {
 				ObjectMapper mapper = new ObjectMapper();
 				response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 				response.setCharacterEncoding("utf-8");

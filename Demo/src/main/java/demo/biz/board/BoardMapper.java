@@ -21,4 +21,8 @@ public interface BoardMapper {
 	public int insertBoardOne(HashMap<String,Object> map);
 	
 	public int insertBoardFile(HashMap<String,Object> map);
+	
+	public int deleteBoardOne(String seq);
+	
+	public int deleteBoardFile(String seq);
 }

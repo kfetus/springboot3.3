@@ -6,106 +6,164 @@
 
 <th:block layout:fragment="script">
 	<script th:inline="javascript">
-
-	const saveData = () => {
-		if ($("#category").val() == '') {
-	        alert("category값 없어.");
-	        $("#category").focus();
-	        return;
-	    }
-		if ($("#srcTitle").val() == '') {
-	        alert("srcTitle값 없어.");
-	        $("#srcTitle").focus();
-	        return;
-	    }
-		if ($("#bodyText").val() == '') {
-	        alert("내용이 없어.");
-	        $("#bodyText").focus();
-	        return;
-	    }
+		const updateSeq = '[[${boardData?.SEQ}]]';
 		
-		var formData = new FormData();
-		var inputFile = $("#srcAddFile");
-		var files = inputFile[0].files;
-		
-		console.log(files[0]);
-		
-		if( !!files[0] ) {
-			var reg = /(.*?)\/(jpg|jpeg|png|bmp)$/;
-			if (!files[0].type.match(reg)) {
-	            alert("확장자는 이미지 확장자만 가능합니다.");
-	            return;
-	        }
-		}
-
-	    formData.append('category',$("#category").val());
-	    formData.append('srcTitle',$("#srcTitle").val());
-		formData.append('bodyText',$("#bodyText").val());
-
-		if( !!files[0] ) {
-			formData.append("multiFiles", files[0]);
-		}
-		console.log(formData);
-		$.ajax({
-			type : "POST",
-			url: "/board/insertBoardOne.do",
-			processData : false,
-			contentType : false,
-			data : formData,
-			success : function(res){
-				if(res.RESCODE == '0000'){
-					alert('성공');
-				} else {
-					alert(res.RESMSG);
+		const saveData = () => {
+			if ($("#category").val() == '') {
+		        alert("category값 없어.");
+		        $("#category").focus();
+		        return;
+		    }
+			if ($("#srcTitle").val() == '') {
+		        alert("srcTitle값 없어.");
+		        $("#srcTitle").focus();
+		        return;
+		    }
+			if ($("#bodyText").val() == '') {
+		        alert("내용이 없어.");
+		        $("#bodyText").focus();
+		        return;
+		    }
+			
+			var formData = new FormData();
+			var inputFile = $("#srcAddFile");
+			var files = inputFile[0].files;
+			
+			console.log(files[0]);
+			
+			if( !!files[0] ) {
+				var reg = /(.*?)\/(jpg|jpeg|png|bmp)$/;
+				if (!files[0].type.match(reg)) {
+		            alert("확장자는 이미지 확장자만 가능합니다.");
+		            return;
+		        }
+			}
+	
+		    formData.append('category',$("#category").val());
+		    formData.append('srcTitle',$("#srcTitle").val());
+			formData.append('bodyText',$("#bodyText").val());
+	
+			if( !!files[0] ) {
+				formData.append("multiFiles", files[0]);
+			}
+			console.log(formData);
+			$.ajax({
+				type : "POST",
+				url: "/board/insertBoardOne.do",
+				processData : false,
+				contentType : false,
+				data : formData,
+				success : function(res){
+					if(res.RESCODE == '0000'){
+						location.href='/board/boardList.do';
+					} else {
+						alert(res.RESMSG);
+					}
+				},
+				error : function(request, status, error) {
+					console.log(error);
 				}
-			},
-			error : function(request, status, error) {
-				console.log(error);
-			}
-		});
-	}	
-
-	const updateData = () => {
-
-	}	
-
-	const fileDown = (seq, fileSeq, fileName) => {
-		console.log(seq+'='+fileSeq+'='+fileName);
-		$.ajax({
-			type : 'GET',
-			url : '/board/blobFiledown.do',
-			data : { 'seq':seq,'fileSeq':fileSeq },
-			xhrFields: {
-				responseType: "blob",
-			},
-			success : function(result) {
-				//The file at 'url주소' was loaded over an insecure connection. This file should be served over HTTPS. 이런 에러가 나는데 다운로드에는 상관 없음. 보안 이슈라는데 이미 받은 파일인데 왜?
-				const url = window.URL.createObjectURL(result);
-	            const link = document.createElement('a');
-	            link.href = url;
-	            link.download=fileName;
-	            link.click();
-	            URL.revokeObjectURL(url);
-	            link.remove();
-			},
-			error : function(request, status, error) {
-				console.log(request);
-				console.log(status);
-				console.log(error);
-			}
-		});
-	}
+			});
+		}	
 	
-	const moveList = () => {
-		$("#mainForm").attr("action", "/board/boardList.do");
-		gfn_submit('mainForm');
-	}
+		const updateData = () => {
+			alert(updateSeq);
+		}	
 	
-	$(function() {
-		//XSS 처리를 위한 방법. 서버에서 처리해서 th:text로 해도 되고. thymeleaf가 아닐경우 escape이 자동 처리 되지 않으면 아래와 같이 처리
-		$("#bodyText").text(gfn_changeXSS($("#bodyText").text()));
+		function deleteData() {
+		    $.ajax({
+		        type: "POST",
+		        url : '/board/boardDeleteOne.do',
+				headers : {"Content-Type" : "application/json"},
+				data : JSON.stringify( { 'seq': updateSeq })
+		    })
+		    .done(function(result, textStatus, xhr) { 
+		    	console.log(result);
+				if( result.RESCODE === '0000' ) {
+					alert('삭제되었습니다');
+					location.href = '/board/boardList.do';
+				} else {
+					alert(result.RESMSG);
+					return;
+				}
+		    })
+		    .fail(function(result, textStatus, error) { 
+		    	console.log(result);
+		    })
+		    .always(function(result, textStatus, error) { 
+		    	console.log('항상찍힘');
+		    	console.log(result);
+		    })
+		    .then(function(result, textStatus, error) {
+		    	console.log('then?');
+		    	console.log(result);
+		    });			
+			
+/*			
+			$.ajax({
+				type : 'post',
+				url : '/board/boardDeleteOne.do',
+				async : true,
+				dataType : 'json',
+				headers : {"Content-Type" : "application/json"},
+				data : JSON.stringify( { 'seq': updateSeq }),
+				success : function(result) {
+					console.log(result);
+					if( result.RESCODE === '0000' ) {
+						alert('삭제 OK 페이지 이동');
+					} else {
+						alert(result.RESMSG);
+						return;
+					}
+				},
+				error : function(request, status, error) {        
+					console.log(error);
+					console.log(status);
+				}, 
+				complete : function(result, status) {    
+					console.log(result);
+				}
+			});
+*/
+		}
 		
-	})
+		const fileDown = (seq, fileSeq, fileName) => {
+			console.log(seq+'='+fileSeq+'='+fileName);
+			$.ajax({
+				type : 'GET',
+				url : '/board/blobFiledown.do',
+				data : { 'seq':seq,'fileSeq':fileSeq },
+				xhrFields: {
+					responseType: "blob",
+				},
+				success : function(result) {
+					//The file at 'url주소' was loaded over an insecure connection. This file should be served over HTTPS. 이런 에러가 나는데 다운로드에는 상관 없음. 보안 이슈라는데 이미 받은 파일인데 왜?
+					const url = window.URL.createObjectURL(result);
+		            const link = document.createElement('a');
+		            link.href = url;
+		            link.download=fileName;
+		            link.click();
+		            URL.revokeObjectURL(url);
+		            link.remove();
+				},
+				error : function(request, status, error) {
+					console.log(request);
+					console.log(status);
+					console.log(error);
+				}
+			});
+		}
+		
+		const moveList = () => {
+			$("#mainForm").attr("action", "/board/boardList.do");
+			gfn_submit('mainForm');
+		}
+		
+		$(function() {
+			//XSS 처리를 위한 방법. 서버에서 처리해서 th:text로 해도 되고. thymeleaf가 아닐경우 escape이 자동 처리 되지 않으면 아래와 같이 처리
+			$("#bodyText").text(gfn_changeXSS($("#bodyText").text()));
+			$("#srcTitle").val(gfn_changeXSS($("#srcTitle").val()));
+		})
 	
 	</script>
 </th:block>
@@ -153,9 +211,10 @@
 	</div>
 	<div style="padding: 10px;"></div>
 	<div>
+		<button type="button" id="listBtn" onclick="javascript:moveList();"><span><strong>목록</strong></span></button>
 		<button th:if="${#strings.isEmpty(paramSeq)}" type="button" id="saveBtn" onclick="javascript:saveData();"><span>저장</span></button>
 		<button th:if="${not #strings.isEmpty(paramSeq)}" type="button" id="updateBtn" onclick="javascript:updateData();"><span>수정</span></button>
-		<button type="button" id="listBtn" onclick="javascript:moveList();"><span><strong>목록</strong></span></button>
+		<button th:if="${not #strings.isEmpty(paramSeq)}" type="button" id="updateBtn" onclick="javascript:deleteData();"><span>삭제</span></button>
 	</div>
 </div>
 </html>
