@@ -8,7 +8,61 @@
 	<script th:inline="javascript">
 
 	const saveData = () => {
+		if ($("#category").val() == '') {
+	        alert("category값 없어.");
+	        $("#category").focus();
+	        return;
+	    }
+		if ($("#srcTitle").val() == '') {
+	        alert("srcTitle값 없어.");
+	        $("#srcTitle").focus();
+	        return;
+	    }
+		if ($("#bodyText").val() == '') {
+	        alert("내용이 없어.");
+	        $("#bodyText").focus();
+	        return;
+	    }
+		
+		var formData = new FormData();
+		var inputFile = $("#srcAddFile");
+		var files = inputFile[0].files;
+		
+		console.log(files[0]);
+		
+		if( !!files[0] ) {
+			var reg = /(.*?)\/(jpg|jpeg|png|bmp)$/;
+			if (!files[0].type.match(reg)) {
+	            alert("확장자는 이미지 확장자만 가능합니다.");
+	            return;
+	        }
+		}
 
+	    formData.append('category',$("#category").val());
+	    formData.append('srcTitle',$("#srcTitle").val());
+		formData.append('bodyText',$("#bodyText").val());
+
+		if( !!files[0] ) {
+			formData.append("multiFiles", files[0]);
+		}
+		console.log(formData);
+		$.ajax({
+			type : "POST",
+			url: "/board/insertBoardOne.do",
+			processData : false,
+			contentType : false,
+			data : formData,
+			success : function(res){
+				if(res.RESCODE == '0000'){
+					alert('성공');
+				} else {
+					alert(res.RESMSG);
+				}
+			},
+			error : function(request, status, error) {
+				console.log(error);
+			}
+		});
 	}	
 
 	const updateData = () => {

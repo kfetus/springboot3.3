@@ -50,7 +50,7 @@ public class DemoWebConfig implements WebMvcConfigurer {
 //	}
 	
 	/**
-	 * 파일 업로드 필터. 아래 XSS 필터와 조합되므로 필수임.
+	 * 파일 업로드 필터. 아래 XSS 필터와 조합되므로 필수임. content-type=multipart/form-data; 인 url은 등록해야 함
 	 * 파일 업로드 url은 반드시 upload/~~~.do 로 시작해야 함
 	 * @return
 	 */
@@ -59,7 +59,7 @@ public class DemoWebConfig implements WebMvcConfigurer {
         FilterRegistrationBean<MultipartFilter> filterRegBean = new FilterRegistrationBean<>();
         filterRegBean.setFilter(new MultipartFilter());
         filterRegBean.setOrder(2);
-        filterRegBean.addUrlPatterns("/upload/*");
+        filterRegBean.addUrlPatterns("/upload/*","/board/*");
         return filterRegBean;
     }
 

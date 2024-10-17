@@ -3,6 +3,7 @@ package demo.biz.board;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,9 +19,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import demo.common.code.CodeService;
+import demo.common.login.SessionManager;
+import demo.common.util.FileUtil;
+import demo.common.vo.UserVO;
 import demo.framework.system.SystemConstant;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
@@ -37,6 +45,9 @@ public class BoardController {
 	
     @Value("${code.success}")
     private String successCode;	
+	
+	@Autowired
+	private SessionManager sessionManager;	
 	
     /**
      * 게시물 조회. postgreSQL JDBC 드라이버는 int일 경우 '' 이 안 붙고, String 일 경우는 붙는다. 쿼리에 바인딩하는 파라미터를 Map으로 던지려면 String,Object로 받아야 처리가 된다
@@ -158,5 +169,51 @@ public class BoardController {
         response.getOutputStream().flush();
         response.getOutputStream().close();
 	}
-	
+
+	@ResponseBody
+	@PostMapping(value = "/insertBoardOne.do")
+	public Map<String, Object> insertBoardOne(@RequestParam(value="srcTitle", required=false) String srcTitle,
+			@RequestParam(value="bodyText", required=false) String bodyText,
+			@RequestParam(value="category", required=false) String category,
+			@RequestPart(value="multiFiles", required=false) MultipartFile multiFiles, HttpServletRequest req) throws Exception {
+		logger.debug("@@@@@@@@@@@ insertBoardOne 시작 @@@@@@@@@@@"+srcTitle);
+		Map<String, Object> retMap = new HashMap<String, Object>();
+		
+		if(multiFiles != null) {
+			boolean checkState = FileUtil.checkUploadFileExtension(multiFiles);
+			if(!checkState) {
+				retMap.put("RESCODE", "9998");
+				retMap.put("RESMSG", "잘못된 파일을 업로드 하였습니다."+multiFiles.getOriginalFilename());
+				logger.debug("@@@@@@@@@@@ insertBoardOne 에러발생=" + retMap);
+				return retMap;
+			}
+		}
+		
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("title",srcTitle);
+		map.put("bodyText",bodyText);
+		map.put("category",category);
+		logger.debug("@@@@@@@@@@@ insertBoardOne 시작map=" + map);
+
+		UserVO vo = sessionManager.getUserInfo(req);
+		if (vo == null) {
+			retMap.put("RESCODE", "9998");
+			retMap.put("RESMSG", "로그인 정보가 없습니다.");
+			logger.debug("@@@@@@@@@@@ insertBoardOne 에러발생=" + retMap);
+			return retMap;
+		} else {
+			map.put("userNo", String.valueOf(vo.getUserNo()));
+		}
+		map.put("multiFiles", multiFiles);
+		
+		
+		int result = boardService.insertBoard(map);
+
+		retMap.put("RESCODE", "0000");
+		retMap.put("RESMSG", "");
+		retMap.put("RESULT_CNT", result);
+
+		logger.debug("@@@@@@@@@@@ insertBoardOne 종료" + retMap);
+		return retMap;
+	}
 }
