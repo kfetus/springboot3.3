@@ -76,6 +76,19 @@ public class BoardService {
 		return result;
 	}
 	
+	
+	/**
+	 * 귀찮..
+	 * @Transactional
+	 * 1. 첨부파일 삭제
+	 * 2. 제목, 내용 업데이트
+	 * 3. 첨푸파일 있으면 다시 업로드
+	 */
+	public int updateBoardOne(HashMap<String,String> map) throws Exception {
+		int result = boardMapper.updateBoardOne(map);
+		return result;
+	}	
+	
 	@Transactional
 	public int deleteBoard(String seq) throws Exception {
 		int result = boardMapper.deleteBoardOne(seq);

@@ -28,6 +28,7 @@ import demo.common.code.CodeService;
 import demo.common.login.SessionManager;
 import demo.common.util.FileUtil;
 import demo.common.vo.UserVO;
+import demo.framework.exception.BaseException;
 import demo.framework.system.SystemConstant;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -53,7 +54,15 @@ public class BoardController {
     @Value("${code.biz.defaultException}")
     private String defaultException;
     
+    @Value("${code.login.infoNullCODE}")
+    private String infoNullCODE;
     
+    @Value("${code.biz.nomalError}")
+    private String nomalError;
+	
+	@Value("${code.validation.null}")
+	private String validationNullCode;
+	
 	@Autowired
 	private SessionManager sessionManager;	
 	
@@ -143,8 +152,9 @@ public class BoardController {
 			
 			List<HashMap<String,String>> list = boardService.selectBoardOneCommemtList(seq);
 			model.addAttribute("commentList",list);
+		} else {
+			throw new BaseException(validationNullCode,"필수값이 누락되었습니다.");
 		}
-
 		logger.debug("@@@@@@@@@@ boardEdit END="+model);
 		return "biz/board/boardEdit";
 	}
@@ -190,7 +200,7 @@ public class BoardController {
 		if(multiFiles != null) {
 			boolean checkState = FileUtil.checkUploadFileExtension(multiFiles);
 			if(!checkState) {
-				retMap.put("RESCODE", "9998");
+				retMap.put("RESCODE", nomalError);
 				retMap.put("RESMSG", "잘못된 파일을 업로드 하였습니다."+multiFiles.getOriginalFilename());
 				logger.debug("@@@@@@@@@@@ insertBoardOne 에러발생=" + retMap);
 				return retMap;
@@ -205,7 +215,7 @@ public class BoardController {
 
 		UserVO vo = sessionManager.getUserInfo(req);
 		if (vo == null) {
-			retMap.put("RESCODE", "9998");
+			retMap.put("RESCODE", infoNullCODE);
 			retMap.put("RESMSG", "로그인 정보가 없습니다.");
 			logger.debug("@@@@@@@@@@@ insertBoardOne 에러발생=" + retMap);
 			return retMap;
@@ -233,7 +243,7 @@ public class BoardController {
 
 		UserVO vo = sessionManager.getUserInfo(req);
 		if (vo == null) {
-			retMap.put("RESCODE", "9998");
+			retMap.put("RESCODE", infoNullCODE);
 			retMap.put("RESMSG", "로그인 정보가 없습니다.");
 			return retMap;
 		} else {
@@ -241,6 +251,12 @@ public class BoardController {
 		}
 		
 		String seq = map.get("seq");
+		
+		if(!StringUtils.hasText(seq)) {
+			retMap.put("RESCODE",validationNullCode);
+			retMap.put("RESMSG","필수값이 누락되었습니다.");
+			return retMap;
+		}
 		HashMap<String, String> resultData = boardService.selectBoardOne(seq);
 		
 		logger.debug("@@@@@@@@@@@ deleteBoardOne resultData=" + resultData);
@@ -267,4 +283,88 @@ public class BoardController {
 		return retMap;
 	}
 
+	
+	@PostMapping("/boardUpdate.do")
+	public String boardUpdate(@RequestParam HashMap<String,String> map, HttpServletRequest req) throws Exception {
+		logger.debug("@@@@@@@@@@ boardUpdate START="+map);
+
+		UserVO vo = sessionManager.getUserInfo(req);
+		if (vo == null) {
+			throw new BaseException(infoNullCODE,"로그인 정보가 없습니다.");
+		} else {
+			map.put("cngUserNo", String.valueOf(vo.getUserNo()));
+		}
+		
+		String seq = map.get("seq");
+		if(!StringUtils.hasText(seq)) {
+			throw new BaseException(validationNullCode,"필수값이 누락되었습니다.");
+		}
+		
+		HashMap<String, String> resultData = boardService.selectBoardOne(seq);
+		
+		logger.debug("@@@@@@@@@@@ deleteBoardOne resultData=" + resultData);
+		
+		String boardOwnerNo = String.valueOf(resultData.get("CNG_USER_NO"));
+		int tempUserNo = Integer.parseInt(boardOwnerNo);
+		if (tempUserNo != vo.getUserNo()) {
+			throw new BaseException(noAuthority,"삭제 권한이 없습니다.");
+		}
+		map.put("title", map.get("srcTitle"));
+		boardService.updateBoardOne(map);
+
+		logger.debug("@@@@@@@@@@ boardUpdate END=");
+		return "redirect:/board/boardList.do";
+	}
+
+	
+	@ResponseBody
+	@PostMapping("/insertBoardCommentOne.do")
+	public Map<String, String> insertBoardCommentOne(@RequestBody HashMap<String,Object> map, HttpServletRequest req) throws Exception {
+		logger.debug("@@@@@@@@@@ insertBoardCommentOne START="+map);
+		Map<String, String> retMap = new HashMap<>();
+
+		UserVO vo = sessionManager.getUserInfo(req);
+		if (vo == null) {
+			retMap.put("RESCODE", infoNullCODE);
+			retMap.put("RESMSG", "로그인 정보가 없습니다.");
+			return retMap;
+		} else {
+			map.put("userNo", String.valueOf(vo.getUserNo()));
+		}
+		
+		String originBoardSeq = (String)map.get("originBoardSeq");
+		
+		if(!StringUtils.hasText(originBoardSeq)) {
+			retMap.put("RESCODE",validationNullCode);
+			retMap.put("RESMSG","필수값이 누락되었습니다.");
+			return retMap;
+		}
+		String bodyText = (String)map.get("bodyText");
+		if(!StringUtils.hasText(bodyText)) {
+			retMap.put("RESCODE",validationNullCode);
+			retMap.put("RESMSG","필수값이 누락되었습니다.");
+			return retMap;
+		}
+		String title = (String)map.get("title");
+		if(!StringUtils.hasText(title)) {
+			retMap.put("RESCODE",validationNullCode);
+			retMap.put("RESMSG","필수값이 누락되었습니다.");
+			return retMap;
+		}
+		
+		int result = boardService.insertBoard(map);
+		
+		if(result > 1) {
+			retMap.put("RESCODE", successCode);
+			retMap.put("RESMSG", "");
+		} else {
+			retMap.put("RESCODE", defaultException);
+			retMap.put("RESMSG", "등록에 실패하였습니다.");
+		}
+		
+		logger.debug("@@@@@@@@@@ insertBoardCommentOne END="+retMap);
+		return retMap;
+	}
+	
+	
 }

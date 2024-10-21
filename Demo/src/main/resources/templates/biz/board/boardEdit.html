@@ -67,7 +67,27 @@
 		}	
 	
 		const updateData = () => {
-			alert(updateSeq);
+//			alert(updateSeq);
+
+			if ($("#category").val() == '') {
+		        alert("category값 없어.");
+		        $("#category").focus();
+		        return;
+		    }
+			if ($("#srcTitle").val() == '') {
+		        alert("srcTitle값 없어.");
+		        $("#srcTitle").focus();
+		        return;
+		    }
+			if ($("#bodyText").val() == '') {
+		        alert("내용이 없어.");
+		        $("#bodyText").focus();
+		        return;
+		    }
+
+			$("#mainForm").attr("action", "/board/boardUpdate.do");
+			$("#mainForm").append($('<input/>', {type: 'hidden', name: 'seq', value:updateSeq }));
+			gfn_submit('mainForm');
 		}	
 	
 		function deleteData() {
@@ -77,7 +97,7 @@
 				headers : {"Content-Type" : "application/json"},
 				data : JSON.stringify( { 'seq': updateSeq })
 		    })
-		    .done(function(result, textStatus, xhr) { 
+		    .done(function(result, status, error) { 
 		    	console.log(result);
 				if( result.RESCODE === '0000' ) {
 					alert('삭제되었습니다');
@@ -159,6 +179,48 @@
 			gfn_submit('mainForm');
 		}
 		
+		const commentSave =(param) =>{
+			console.log(param);
+/* 			srcCommentBodyText
+			srcCommentTitle
+			updateSeq
+			, #{category}
+			, #{title}
+			, #{bodyText}
+			, #{originBoardSeq}
+			
+*/
+		    $.ajax({
+		        type: "POST",
+		        url : '/board/insertBoardCommentOne.do',
+				headers : {"Content-Type" : "application/json"},
+				data : JSON.stringify( { 'category': $("#category").val(),'title':$("#srcCommentTitle").val(), 'bodyText':$("#srcCommentBodyText").val(),'originBoardSeq':updateSeq })
+		    })
+		    .done(function(result, status, error) { 
+		    	console.log(result);
+				if( result.RESCODE === '0000' ) {
+					alert('등록되었습니다');
+					location.href = '/board/boardList.do';//귀찮음.. 댓글 리스트 갱신하고 값 비워주는게 맞을건데 귀찮음...
+				} else {
+					alert(result.RESMSG);
+					return;
+				}
+		    })
+		    .fail(function(result, textStatus, error) { 
+		    	console.log(result);
+		    })
+		    .always(function(result, textStatus, error) { 
+		    	console.log('항상찍힘');
+		    	console.log(result);
+		    })
+		    .then(function(result, textStatus, error) {
+		    	console.log('then?');
+		    	console.log(result);
+		    });			
+
+		}
+		
+		
 		$(function() {
 			//XSS 처리를 위한 방법. 서버에서 처리해서 th:text로 해도 되고. thymeleaf가 아닐경우 escape이 자동 처리 되지 않으면 아래와 같이 처리
 			$("#bodyText").text(gfn_changeXSS($("#bodyText").text()));
@@ -194,6 +256,13 @@
 			<label for="srcAddFile">첨부파일</label>
 			<input type="file" id="srcAddFile"  />
 		</div>
+		<div style="padding: 10px;"></div>
+		<div>
+			<button type="button" id="listBtn" onclick="javascript:moveList();"><span><strong>목록</strong></span></button>
+			<button th:if="${#strings.isEmpty(paramSeq)}" type="button" id="saveBtn" onclick="javascript:saveData();"><span>저장</span></button>
+			<button th:if="${not #strings.isEmpty(paramSeq)}" type="button" id="updateBtn" onclick="javascript:updateData();"><span>수정</span></button>
+			<button th:if="${not #strings.isEmpty(paramSeq)}" type="button" id="updateBtn" onclick="javascript:deleteData();"><span>삭제</span></button>
+		</div>
 		</form>		
 	</div>
 	<div style="padding: 10px;"></div>
@@ -204,17 +273,21 @@
 		</div>
 		<div>
 			<div th:each="rowData:${commentList}">
-				<h4>[[${rowDataStat.count}]]댓글 제목:[[${rowData.TITLE}]]</h4>
-				<p>내용:[[${rowData.BODY_TEXT}]]</p>
+				<h4>[[${rowDataStat.count}]]댓글 제목:<span th:utext="${rowData.TITLE}"></span></h4>
+				<p>내용:<span th:utext="${rowData.BODY_TEXT}" ></span></p>
 			</div>
 		</div>
 	</div>
 	<div style="padding: 10px;"></div>
 	<div>
-		<button type="button" id="listBtn" onclick="javascript:moveList();"><span><strong>목록</strong></span></button>
-		<button th:if="${#strings.isEmpty(paramSeq)}" type="button" id="saveBtn" onclick="javascript:saveData();"><span>저장</span></button>
-		<button th:if="${not #strings.isEmpty(paramSeq)}" type="button" id="updateBtn" onclick="javascript:updateData();"><span>수정</span></button>
-		<button th:if="${not #strings.isEmpty(paramSeq)}" type="button" id="updateBtn" onclick="javascript:deleteData();"><span>삭제</span></button>
+		<label for="srcCommentTitle">댓글제목</label>
+		<input name="srcCommentTitle" id="srcCommentTitle" placeholder="제목입력" />
+		<br>
+		<label for="srcCommentBodyText" style="vertical-align: top;">내용</label>
+		<textarea name="srcCommentBodyText" id="srcCommentBodyText" cols="54" rows="5" placeholder="내용입력" ></textarea>
+		<div>
+			<button type="button" id="commentSave" onclick="javascript:commentSave('test');"><span><strong>댓글등록</strong></span></button>
+		</div>
 	</div>
 </div>
 </html>

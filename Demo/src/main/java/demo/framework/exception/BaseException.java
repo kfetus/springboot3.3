@@ -33,9 +33,9 @@ public class BaseException extends Exception {
 		this.message = defaultMessage;
 	}
 
-	public BaseException(String message, String code) {
-		this.message = message;
+	public BaseException(String code, String message ) {
 		this.errorCode = code;
+		this.message = message;
 	}
 
 	public BaseException(String defaultMessage,Throwable throwable) {

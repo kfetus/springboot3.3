@@ -171,11 +171,12 @@
 			)
 	</insert>
 
-	<update id="updateBoardOne">
+	<update id="updateBoardOne" parameterType="java.util.HashMap">
 		UPDATE MAIN_BOARD /* BoardMapper.updateBoardOne 게시판 update */
 		SET    CATEGORY  = #{category},
 		       TITLE     = #{title},
 		       BODY_TEXT = #{bodyText},
+		       CNG_USER_NO = #{cngUserNo},
 		       CNG_DT    = CURRENT_TIMESTAMP()
 		WHERE SEQ = #{seq}
 	</update>
