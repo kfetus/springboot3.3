@@ -33,8 +33,8 @@ public class DemoExceptionResolver implements HandlerExceptionResolver {
 		exceptionRetMap.put("MSG", reqException.getMessage());
 		reqException.printStackTrace();
 		
-		String reqAccept = request.getHeader("accept");
-		String reqContentType = request.getHeader("content-type");
+		String reqAccept = request.getHeader("accept")==null?"":request.getHeader("accept");
+		String reqContentType = request.getHeader("content-type")==null?"":request.getHeader("content-type");
 		logger.debug("==========req accept=" + reqAccept);
 		logger.debug("==========req reqContentType=" + reqContentType);
 		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

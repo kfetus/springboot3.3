@@ -59,6 +59,14 @@ public class SampleController {
 		return "sample/sample1";
 	}
 
+	@GetMapping("/aggridSample.do")
+	public String aggridSample(Model model) {
+		model.addAttribute("data", "가나다라마바사12");
+		logger.debug("@@@@@@@@@@ aggridSample");
+		return "sample/aggridSample";
+	}
+	
+	
 	/**
 	 * url에 들어온 url 그대로 view로 매핑. 파라미터들 그대로 전달
 	 * @param map

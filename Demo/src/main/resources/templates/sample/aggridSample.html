@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.com">
+	<head>
+		<meta charset="UTF-8">
+		<title>샘플</title>
+		<meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1, user-scalable=yes,initial-scale=1.0" /> 
+		<link th:href="@{/css/base.css}" rel="stylesheet" />
+		<script th:src="@{/js/comm/jquery-3.7.1.js}"></script>
+		<script th:src="@{/js/comm/siteComm.js}"></script>
+		<script th:src="@{/js/comm/ag-grid-community.min.js}"></script>
+
+<script>
+	
+	function initAggrid() {
+		const gridOptions = {
+			rowData: [
+				{ pk: "1", varchar타입: "Model Y", int타입: 12345, date타입: 64950, char타입: 64950, 파일명: "수정가능", 설명: 64950, 수정일: 64950, yn: true, yn2: true },
+				{ pk: "2", varchar타입: "Model Y", int타입: 64950, date타입: 64950, char타입: 64950, 파일명: "64950", 설명: 64950, 수정일: 64950, yn: false, yn2: true  },
+				{ pk: "3", varchar타입: "Model Y", int타입: 99885, date타입: 64950, char타입: 64950, 파일명: "64950", 설명: 64950, 수정일: 64950, yn: true, yn2: true  },
+			],
+	
+			columnDefs: [
+				{ field: "pk" },
+				{ field: "varchar타입" },
+				{ field: "int타입" },
+				{ field: "date타입" },
+				{ field: "char타입" },
+				{ field: "파일명" ,editable: true },
+				{ field: "설명" },
+				{ field: "수정일" },
+				{ field: "yn" },
+				{ field: "yn2" ,editable: true },
+			]
+		};
+		
+		const myGridElement = document.querySelector('#myGrid');
+		agGrid.createGrid(myGridElement, gridOptions);
+	}
+	
+	$(function() {
+		console.log('document.onload()');
+		initAggrid();
+	})
+
+
+</script>
+
+	</head>
+	<body>
+		<h1>ag-grid 페이지</h1>
+		
+		<div id="myGrid" class="ag-theme-quartz" style="height: 500px"></div>
+	</body>
+</html>
