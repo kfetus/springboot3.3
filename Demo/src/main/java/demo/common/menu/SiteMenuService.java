@@ -17,6 +17,7 @@ public class SiteMenuService {
 	@Autowired
 	private SiteMenuMapper siteMenuMapper;
 	
+	//파라미터별로 캐싱
 	@Cacheable("systemCache")
 	public List<HashMap<String,String>> selectMenuList(HashMap<String,String> map) throws Exception {
 		logger.debug("@@@@@@@@@@@ selectMenuList Service 시작=" + map);
