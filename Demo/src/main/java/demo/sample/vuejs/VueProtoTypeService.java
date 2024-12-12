@@ -20,4 +20,9 @@ public class VueProtoTypeService {
 		logger.debug("@@@@@@@@@@@@@ VueProtoTypeService.selectOneUserVo resultVo=" + resultVo);
 		return resultVo;
 	}
+	
+	public UserVO selectUserInfoOne(String userNo) throws Exception {
+		UserVO vo = vptMapper.selectUserInfoOne(userNo);
+		return vo;
+	}
 }

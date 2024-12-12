@@ -8,4 +8,6 @@ import demo.common.vo.UserVO;
 public interface VueProtoTypeMapper {
 
 	public UserVO selectOneUserVo(UserVO vo);
+	
+	public UserVO selectUserInfoOne(String userNo);
 }

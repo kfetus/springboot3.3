@@ -25,5 +25,23 @@
 <!-- 단방향 암호화. java에서 확인 필요		 AND USER_PASS = #{userPass} -->
 	</select>
 
+	<select id="selectUserInfoOne" parameterType="String" resultType="demo.common.vo.UserVO">
+		SELECT A.USER_NO /* UserInfoMapper.selectUserInfoOne 사용자 정보 상세 조회 */
+			, B.USER_ID 
+			, B.USER_NAME
+			, B.USER_IP
+			, B.DESCRIP
+			, B.GRADE 
+			, B.REG_DT
+			, B.CNG_DT 
+			, A.HP_NO
+			, A.EMAIL
+			, A.ZONE_CODE
+			, A.ROAD_ADDR
+			, A.JIBUN_ADDR
+			, A.DETAIL_ADDR
+		FROM user_info A INNER JOIN login_info B ON A.USER_NO = B.USER_NO
+		WHERE A.USER_NO =  #{userNo}
+	</select>
 		
 </mapper>

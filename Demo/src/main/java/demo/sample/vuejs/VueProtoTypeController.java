@@ -27,7 +27,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @ResponseBody
 public class VueProtoTypeController {
 
-	private final Logger logger = LogManager.getLogger(VueProtoTypeController.class);
+	private final Logger logger = LogManager.getLogger(this.getClass());
 	
     @Value("${code.success}")
     private String successCode;
@@ -109,10 +109,14 @@ public class VueProtoTypeController {
 	@PostMapping(value = "/restLogOut.do")
 	public Map<String,Object> restLogOut(@RequestBody Map<String, Object> map, HttpServletRequest req) throws Exception {
 		logger.debug("@@@@@@@@@@@ restLogOut 시작="+map);
+		Map<String , Object> retMap = new HashMap<String,Object>();
 
 		sessionManager.removeUserInfo(req);
-		logger.debug("@@@@@@@@@@@ restLogOut 종료");
-		return map;
+		
+		retMap.put("RESCODE",successCode);
+		retMap.put("RESMSG","정상적으로 처리되었습니다.");
+		logger.debug("@@@@@@@@@@@ restLogOut 종료"+retMap);
+		return retMap;
 	}
 	
 	/**
@@ -140,6 +144,31 @@ public class VueProtoTypeController {
 		retMap.put("userInfo", vo);
 		logger.debug("@@@@@@@@@@@ checkUser 종료");
 		return retMap;
-	}	
+	}
+	
+	@PostMapping(value = "/userInfoOne.do")
+	public Map<String,Object> selectUserInfoOne(@RequestBody  HashMap<String,String> map, HttpServletRequest req) throws Exception {
+		logger.debug("@@@@@@@@@@@ selectBoardOne 시작=" + map);
+		Map<String , Object> retMap = new HashMap<String,Object>();
+
+		UserVO loginVo = sessionManager.getUserInfo(req);
+		if (loginVo == null) {
+			retMap.put("RESCODE",bizNoUser);
+			retMap.put("RESMSG","로그인 정보가 없습니다.");
+			return retMap;
+		}
+		
+		UserVO vo = vptService.selectUserInfoOne(String.valueOf(loginVo.getUserNo()));
+		vo.setUserId(StringUtil.asteriskName(vo.getUserId()));//ID 변환.
+		vo.setUserName(StringUtil.asteriskName(vo.getUserName()));//이름 변환.
+		vo.setHpNo(StringUtil.asteriskHP(vo.getHpNo()));//HP 변환
+		
+		retMap.put("RESCODE",successCode);
+		retMap.put("RESMSG","정상적으로 처리되었습니다");
+		retMap.put("RESULT_DATA",vo);
+
+		logger.debug("@@@@@@@@@@@ selectBoardOne 종료"+retMap);
+		return retMap;
+	}
 	
 }
