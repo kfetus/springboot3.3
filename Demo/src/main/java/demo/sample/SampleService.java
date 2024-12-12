@@ -71,4 +71,17 @@ public class SampleService {
 		
 		return count;
 	}
+	
+	public int vueSelectBoardListCnt(HashMap<String,Object> map) throws Exception {
+		logger.debug("@@@@@@@@@@@@@ vueSelectBoardListCnt param data=" + map);
+		int result = sampleMapper.vueSelectBoardListCnt(map);
+		return result;
+	}
+	
+	public List<HashMap<String,String>> vueSelectList(HashMap<String,Object> map) throws Exception {
+		List<HashMap<String,String>> result = sampleMapper.vueSelectList(map);
+		logger.debug("@@@@@@@@@@@@@ SampleService.vueSelectList result=" + result);
+		return result;
+	}
+
 }

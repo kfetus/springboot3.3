@@ -14,5 +14,7 @@ public interface SampleMapper {
 	public int insertFileUploadTest(HashMap<String,Object> map);
 	
 	public int insertListUploadTest(List<HashMap<String, String>> list);
-	
+
+	public int vueSelectBoardListCnt(HashMap<String,Object> map);
+	public List<HashMap<String,String>> vueSelectList(HashMap<String,Object> map);
 }

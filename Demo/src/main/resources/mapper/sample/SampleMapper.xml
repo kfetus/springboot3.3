@@ -82,5 +82,45 @@
 				)
 			</foreach>
 	</insert>
+
+   <select id="vueSelectBoardListCnt" parameterType="java.util.HashMap" resultType="int">
+		SELECT /* BoardMapper.selectBoardListCnt 게시판 목록 갯수 조회 */
+				COUNT(A.SEQ) AS TOTAL_CNT
+		  FROM MAIN_BOARD A 
+		 WHERE A.ORIGIN_BOARD_SEQ IS NULL 
+		<if test="seq != null and seq != '' ">AND A.SEQ = #{seq}</if>
+		<if test="title != null and title != '' ">AND A.TITLE LIKE CONCAT('%',#{title},'%')</if>
+		<if test="category != null and category != '' ">AND A.CATEGORY = #{category}</if>
+    </select>
+
+
+   <select id="vueSelectList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT /* BoardMapper.selectBoardList 게시판 목록 조회 */
+				A.SEQ
+				, A.CATEGORY
+				, B.CODE_NAME
+				, A.TITLE
+				, A.BODY_TEXT
+				, A.ORIGIN_BOARD_SEQ
+				, C.COMMENT_CNT
+				, A.ORDER_NUM
+				, A.CNG_USER_NO
+				, DATE_FORMAT(A.REG_DT, '%Y-%m-%d %H:%i:%s') REG_DT
+				, DATE_FORMAT(A.REG_DT, '%Y-%m-%d') REG_DT2
+				, DATE_FORMAT(A.CNG_DT, '%Y-%m-%d %H:%i:%s') CNG_DT
+		  FROM MAIN_BOARD A INNER JOIN CODE B ON (A.CATEGORY = B.CODE AND B.CODE_TYPE = 'BOARD') 
+		  		 LEFT OUTER JOIN (SELECT COUNT(ORIGIN_BOARD_SEQ) AS COMMENT_CNT 
+								 		, ORIGIN_BOARD_SEQ
+									FROM main_board
+								   WHERE ORIGIN_BOARD_SEQ IS NOT NULL
+								GROUP BY ORIGIN_BOARD_SEQ) AS C ON A.SEQ = C.ORIGIN_BOARD_SEQ
+		  WHERE A.ORIGIN_BOARD_SEQ IS NULL 
+			<if test="seq != null and seq != '' ">AND A.SEQ = #{seq}</if>
+			<if test="title != null and title != '' ">AND A.TITLE LIKE CONCAT('%',#{title},'%')</if>
+			<if test="category != null and category != '' ">AND A.CATEGORY = #{category}</if>
+		ORDER BY SEQ DESC
+		LIMIT #{pageListCnt} OFFSET #{startIdx}
+    </select>
+
 		
 </mapper>

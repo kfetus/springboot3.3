@@ -7,8 +7,10 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +24,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import demo.common.login.SessionManager;
 import demo.common.util.ClassLoaderInfo;
+import demo.common.vo.UserVO;
+import demo.framework.system.SystemConstant;
 //import demo.common.StringUtil;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -30,6 +35,12 @@ import jakarta.servlet.http.HttpServletRequest;
 public class SampleController {
 
 	private final Logger logger = LogManager.getLogger(SampleController.class);
+	
+    @Value("${code.success}")
+    private String successCode;
+	
+	@Autowired
+	private SessionManager sessionManager;
 	
 	@Autowired
 	private SampleService sampleService;
@@ -138,7 +149,7 @@ public class SampleController {
 		
 		List<HashMap<String,String>> list = sampleService.selectList(map);
 		
-		retMap.put("RESCODE", "0000");
+		retMap.put("RESCODE", successCode);
 		retMap.put("RESMSG", "정상적으로 처리되었습니다");
 		retMap.put("RESULT_SIZE", list.size());
 		retMap.put("RESULT_LIST", list);
@@ -162,7 +173,7 @@ public class SampleController {
 			classInfo = cl.getLoadingClassInfo(className);
 		}
 
-		retMap.put("RESCODE", "0000");
+		retMap.put("RESCODE", successCode);
 		retMap.put("RESMSG", "정상적으로 처리되었습니다");
 		retMap.put("RESULT_MAP", classInfo);
 
@@ -205,7 +216,7 @@ public class SampleController {
 		logger.debug("@@@@@@@@@@@ insertBoardOne 시작map=" + map);
 		
 		int result = sampleService.insertFileUploadTest(map);
-		retMap.put("RESCODE", "0000");
+		retMap.put("RESCODE", successCode);
 		retMap.put("RESMSG", "게시물을 등록하였습니다.");
 		retMap.put("RESULT_CNT", result);
 
@@ -213,4 +224,87 @@ public class SampleController {
 		return retMap;
 	}	
 
+	
+	/**
+	 * Vuejs 샘플
+	 * @param map
+	 * @return
+	 * @throws Exception
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/boardList.do" , method = {RequestMethod.GET, RequestMethod.POST})
+	public Map<String, Object> vueBoardList(@RequestBody HashMap<String, Object> map) throws Exception {
+		logger.debug("@@@@@@@@@@ vueBoardList 시작=" + map);
+		Map<String, Object> retMap = new HashMap<String, Object>();
+		
+		int totalCnt = sampleService.vueSelectBoardListCnt(map);
+		
+		int nowPage = 0;
+		int pageListCnt = SystemConstant.DEFAULT_PAGE_LIST_COUNT;
+		int startIdx = 0;
+		
+		if (totalCnt == 0) {
+			retMap.put("RESCODE", successCode);
+			retMap.put("RESMSG", "데이타 없습니다.");
+			retMap.put("RESULT_SIZE", "0");
+			return retMap;
+		} else {
+			
+			if( !ObjectUtils.isEmpty(map.get("nowPage")) && StringUtils.hasText(String.valueOf(map.get("nowPage")))) {
+				nowPage = Integer.parseInt(String.valueOf(map.get("nowPage")));
+				if(nowPage > 0) {
+					nowPage = nowPage -1;
+				}
+			}
+			if( !ObjectUtils.isEmpty(map.get("pageListCnt")) && StringUtils.hasText(String.valueOf(map.get("pageListCnt")))) {
+				pageListCnt = Integer.parseInt(String.valueOf(map.get("pageListCnt")));
+			}
+			
+			
+			startIdx = nowPage * pageListCnt;
+			map.put("startIdx", startIdx);
+			map.put("pageListCnt", pageListCnt);
+			List<HashMap<String, String>> resultList = sampleService.vueSelectList(map);
+
+/*			절대로 서버에서 바꿔서 리턴하면 안됨. 변경해서 리턴하면 컴파일된 jsp를 브라우저는 그대로 실행하게 되므로 XSS에 취약해짐. 필요하면 클라이언트에서 해당 값 replace해야 함(EX:에디터 내용들) 
+			for(int i = 0 ; i < resultList.size();i++) {
+				HashMap<String, String> row = resultList.get(i);
+				String bodyText = row.get("BODY_TEXT");
+				logger.debug("@@@@@@@@@@@ boardList bodyText=" + bodyText);
+				bodyText = bodyText.replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&#40;", "(").replaceAll("&#41;", ")");
+				logger.debug("@@@@@@@@@@@ boardList after bodyText=" + bodyText);
+				row.put("BODY_TEXT", bodyText);
+			}
+*/			
+			retMap.put("RESCODE", successCode);
+			retMap.put("RESMSG", "");
+			retMap.put("RESULT_SIZE", resultList.size());
+			retMap.put("RESULT_LIST", resultList);
+			retMap.put("RESULT_TOTAL_CNT", totalCnt);
+		}
+
+		logger.debug("@@@@@@@@@@@ boardList 종료" + retMap);
+		return retMap;	}
+	
+	@ResponseBody
+	@PostMapping(value = "/checkUser.do")
+	public Map<String,Object> checkUser(HttpServletRequest req) throws Exception {
+		logger.debug("@@@@@@@@@@@ checkUser 시작=");
+		
+		Map<String , Object> retMap = new HashMap<String,Object>();
+		retMap.put("RESCODE",successCode);
+		retMap.put("RESMSG","정상적으로 처리되었습니다.");
+				
+		UserVO vo = (UserVO)sessionManager.getUserInfo(req);
+		if( vo != null) {
+			logger.debug("@@@@@@@@@@@ 로그인 사용자 정보:"+vo.toString());
+			retMap.put("loginYn","Y");
+		} else {
+			retMap.put("loginYn","N");
+		}
+		retMap.put("userInfo", vo);
+		logger.debug("@@@@@@@@@@@ checkUser 종료");
+		return retMap;
+	}	
+	
 }
