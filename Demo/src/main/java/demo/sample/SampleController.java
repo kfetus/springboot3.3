@@ -24,9 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import demo.common.login.SessionManager;
 import demo.common.util.ClassLoaderInfo;
-import demo.common.vo.UserVO;
 import demo.framework.system.SystemConstant;
 //import demo.common.StringUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,9 +36,6 @@ public class SampleController {
 	
     @Value("${code.success}")
     private String successCode;
-	
-	@Autowired
-	private SessionManager sessionManager;
 	
 	@Autowired
 	private SampleService sampleService;
@@ -286,25 +281,5 @@ public class SampleController {
 		logger.debug("@@@@@@@@@@@ boardList 종료" + retMap);
 		return retMap;	}
 	
-	@ResponseBody
-	@PostMapping(value = "/checkUser.do")
-	public Map<String,Object> checkUser(HttpServletRequest req) throws Exception {
-		logger.debug("@@@@@@@@@@@ checkUser 시작=");
-		
-		Map<String , Object> retMap = new HashMap<String,Object>();
-		retMap.put("RESCODE",successCode);
-		retMap.put("RESMSG","정상적으로 처리되었습니다.");
-				
-		UserVO vo = (UserVO)sessionManager.getUserInfo(req);
-		if( vo != null) {
-			logger.debug("@@@@@@@@@@@ 로그인 사용자 정보:"+vo.toString());
-			retMap.put("loginYn","Y");
-		} else {
-			retMap.put("loginYn","N");
-		}
-		retMap.put("userInfo", vo);
-		logger.debug("@@@@@@@@@@@ checkUser 종료");
-		return retMap;
-	}	
 	
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="demo.sample.vuejs.VueProtoTypeMapper">
+
+	<select id="selectOneUserVo" parameterType="demo.common.vo.UserVO" resultType="demo.common.vo.UserVO">
+		SELECT A.USER_NO /* LoginMapper.selectOneUserVo 사용자 조회 */
+			, A.USER_ID
+			, A.USER_PASS
+			, A.SALT
+			, A.USER_NAME
+			, A.USER_IP
+			, A.DESCRIP
+			, A.GRADE
+			, A.REG_DT
+			, A.CNG_DT 
+			, B.HP_NO
+			, B.EMAIL
+			, B.ZONE_CODE
+			, B.ROAD_ADDR
+			, B.JIBUN_ADDR
+			, B.DETAIL_ADDR
+		FROM login_info A INNER JOIN user_info B ON A.USER_NO = B.USER_NO
+	   WHERE USER_ID = #{userId}
+<!-- 단방향 암호화. java에서 확인 필요		 AND USER_PASS = #{userPass} -->
+	</select>
+
+		
+</mapper>

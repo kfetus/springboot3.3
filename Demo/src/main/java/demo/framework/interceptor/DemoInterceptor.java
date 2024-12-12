@@ -11,6 +11,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import demo.common.menu.SiteMenuService;
+//import demo.sample.vuejs.JwtComponent;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -21,6 +22,9 @@ public class DemoInterceptor implements HandlerInterceptor {
 	@Autowired
 	private SiteMenuService siteMenuService;
 	
+//	@Autowired
+//	private JwtComponent jwt;	
+	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
@@ -29,6 +33,15 @@ public class DemoInterceptor implements HandlerInterceptor {
 		logger.debug("========== DemoInterceptor.preHandle =========="+request.getRequestURI());
 		//이 값은 spring에서 request를 받을때 정상 요청인지 에러 요청인지 판단을 주로 하는데 thymeleaf에서 Layout을 사용하면 에러가 발생해도 값이 INCLUDE로 와서 처리가 불가함.
 		logger.debug("========== DemoInterceptor.preHandle getDispatcherType()=========="+request.getDispatcherType());
+		
+		
+        //jwt 관련 샘플 보기. url 별로 셋팅해서 체크해야 하는데 그냥 샘플이라 있으면 하고 아니면 말고임.
+//        String jwtToken = request.getHeader(jwt.HEADER_KEY);
+//        logger.debug("request.getHeader(jwt.HEADER_KEY)="+jwtToken);
+//        if(jwtToken != null) {
+//        	logger.debug("jwt.verifyJWT(jwtToken)="+jwt.verifyJWT(jwtToken));
+//        }
+        
 /*
         logger.debug("========== request.getRemoteAddr()=>"+request.getRemoteAddr());
         Enumeration<?> en1 = request.getHeaderNames();
