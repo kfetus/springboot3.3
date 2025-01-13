@@ -3,6 +3,8 @@ package demo.common.util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import demo.framework.exception.BaseException;
+
 public class StringUtil {
 
 	private static final Logger logger = LogManager.getLogger(StringUtil.class);
@@ -107,5 +109,20 @@ public class StringUtil {
 		}
 		
 		return mask;
-	}	
+	}
+	
+	public static String asteriskSsn(String ssn) throws Exception{
+		String maskSsn = "";
+		
+		if(ssn.length() != 13) {
+			throw new BaseException("9999","형식이 잘못되었습니다.");
+		}
+//		for ( int i = 0; i < ssn.length(); i++) {
+//			System.out.println(ssn.charAt(i));
+//		}
+		maskSsn = ssn.substring(0, 6) + "-" + ssn.substring(6,7) + "******";
+		
+		return maskSsn;
+	}
+	
 }
