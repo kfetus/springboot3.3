@@ -1,14 +1,22 @@
 package demo.common.util;
 
+import java.net.URLDecoder;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class HttpUtil {
 
 	private static final Logger logger = LogManager.getLogger(HttpUtil.class);
 	
+	/**
+	 * 사용자 IP. 기본적인 차례대로 리턴. Proxy등 인터넷 환경에 따라 달라지므로 단지 참조용
+	 * @param req
+	 * @return
+	 */
 	public static String getClientIp(HttpServletRequest req) {
 		logger.debug("@@@@@@@@@@ client IP info={} {} {} {} {} {}",req.getHeader("X-Forwarded-For"),req.getHeader("Proxy-Client-IP")
 				,req.getHeader("WL-Proxy-Client-IP"),req.getHeader("HTTP_CLIENT_IP"),req.getHeader("HTTP_X_FORWARDED_FOR"),req.getRemoteAddr());
@@ -28,6 +36,11 @@ public class HttpUtil {
 		} 
 	}
 	
+	/**
+	 * 사용자 브라우저 정보
+	 * @param req
+	 * @return
+	 */
 	public static String getClientBrowser(HttpServletRequest req) {
 		String agent = req.getHeader("User-Agent");
 		String cBrowser = "not Judge";
@@ -49,6 +62,11 @@ public class HttpUtil {
 		return cBrowser;
 	}
 	
+	/**\
+	 * 사용자 PC 모바일 구분. Spring의 device가 대체가능
+	 * @param req
+	 * @return
+	 */
 	public static String getClientAccessDevice(HttpServletRequest req) {
 		String mobileType[] = {"iphone","ipod","android","windows ce","blackberry","symbian","windows phone","webos","opera mini","opera mobi","polaris","iemobile","lgtelecom","nokia","sonyericsson","lg","samsung"};
 		String aDevice = "not Judge";
@@ -62,6 +80,32 @@ public class HttpUtil {
 			}
 		}
 		return aDevice;
+	}
+	
+	/**
+	 * 쿠키값 리턴. 쿠키에 저장하는 장바구니라던가, 오늘본 상품 등 용
+	 * @param req
+	 * @param key
+	 * @return
+	 * @throws Exception
+	 */
+	public static String getCookies(HttpServletRequest req, String key) throws Exception {
+		String value= "";
+
+		Cookie cookie[] = req.getCookies();
 		
-	}	
+		if( "".equals(key)) {
+			return value;
+		}
+		
+		if( cookie != null && cookie.length > 0) {
+			for(int i = 0; i < cookie.length; i++) {
+				if(key == cookie[i].getName()) {
+					value = URLDecoder.decode(cookie[i].getValue(), "UTF-8");
+				}
+			}
+		}
+		return value;
+	}
+	
 }

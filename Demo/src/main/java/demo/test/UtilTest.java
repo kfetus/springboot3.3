@@ -22,6 +22,9 @@ public class UtilTest {
 			System.out.println( DateUtil.getDayOfWeekTodayStr(Locale.KOREAN) );
 			System.out.println( DateUtil.getDayOfWeekTodayStr(Locale.ENGLISH) );
 			System.out.println( StringUtil.asteriskSsn("1234567891230") );
+			System.out.println( StringUtil.getCardNo("1234567890123456") );
+			
+			System.out.println( StringUtil.getMoneyFormat(1234567890123343434L) );
 			
 		} catch (Exception e) {
 			e.printStackTrace();

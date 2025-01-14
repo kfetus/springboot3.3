@@ -152,8 +152,9 @@ public class BoardController {
 			
 			List<HashMap<String,String>> list = boardService.selectBoardOneCommemtList(seq);
 			model.addAttribute("commentList",list);
-		} else {
-			throw new BaseException(validationNullCode,"필수값이 누락되었습니다.");
+		//수정과 화면을 같이 쓰기 위해.
+//		} else {
+//			throw new BaseException(validationNullCode,"필수값이 누락되었습니다.");
 		}
 		logger.debug("@@@@@@@@@@ boardEdit END="+model);
 		return "biz/board/boardEdit";

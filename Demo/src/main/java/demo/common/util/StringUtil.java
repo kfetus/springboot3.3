@@ -9,6 +9,11 @@ public class StringUtil {
 
 	private static final Logger logger = LogManager.getLogger(StringUtil.class);
 	
+	/**
+	 * html escape. Xss 대응 치환된 문자열을 다시 태그로 변환
+	 * @param unEscapedStr
+	 * @return
+	 */
 	public static String unEscapeXSS(String unEscapedStr) {
 //		logger.debug("========== StringUtil.unEscapeXSS String =>" + unEscapedStr);
 
@@ -94,7 +99,11 @@ public class StringUtil {
 		return chgStr;
 	}
 
-	
+	/**
+	 * 핸드폰 번호 마스킹
+	 * @param hpNo
+	 * @return
+	 */
 	public static String asteriskHP(String hpNo) {
 		String mask = "";
 		
@@ -111,6 +120,12 @@ public class StringUtil {
 		return mask;
 	}
 	
+	/**
+	 * 주민등록번호 마스킹
+	 * @param ssn
+	 * @return
+	 * @throws Exception
+	 */
 	public static String asteriskSsn(String ssn) throws Exception{
 		String maskSsn = "";
 		
@@ -123,6 +138,34 @@ public class StringUtil {
 		maskSsn = ssn.substring(0, 6) + "-" + ssn.substring(6,7) + "******";
 		
 		return maskSsn;
+	}
+
+	/**
+	 * 카드번호 마스킹
+	 * @param cardNo
+	 * @return
+	 * @throws Exception
+	 */
+	public static String getCardNo(String cardNo) throws Exception {
+		String maskStr = "";
+		if(cardNo.length() != 16) {
+			throw new BaseException("9999","형식이 잘못되었습니다.");
+		}
+		maskStr = cardNo.substring(0, 4) + "-" + cardNo.substring(4,6) + "**-**" + cardNo.substring(10,12) + "-" + cardNo.substring(12,16);
+		return maskStr;
+	}
+	
+	/**
+	 * 숫자유틸을 넣어야 하나?
+	 * 숫자 포맷팅(콤마)
+	 * @param value
+	 * @return
+	 * @throws Exception
+	 */
+	public static String getMoneyFormat(long value) throws Exception {
+		String formatedStr = "";
+		formatedStr = String.format("%,d", value);
+		return formatedStr;
 	}
 	
 }
