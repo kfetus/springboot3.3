@@ -1,82 +1,104 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>모바일메인샘플</title>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>모바일메인샘플</title>
+		<script src="/js/comm/jquery-3.7.1.js"></script>
+		
+		<style>
+			* {
+			  box-sizing: border-box;
+			  margin: 0;
+			  padding: 0;
+			  list-style: none;
+			  text-decoration: none;
+			}
+			
+			header {
+			  width: 100%;
+			  top: 0;
+			  border: 1px solid #000000;
+			  background-color: #f1ef84;
+			}
+			
+			main {
+			  width: 100%;
+			  margin: 0 auto;
+			  background-color: #84f1cb;
+			}
+			
+			footer {
+			  width: 100%;
+			  align-items: center;
+			  bottom: 0;
+			  background-color: #e084f1;
+			}
+		
+		</style>
+		
+		<script>
+			const sampleFunction = () => {
+				alert('sample');
+				console.log('vanilla script');
+			}
 
-<style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  text-decoration: none;
-}
-
-header {
-  width: 100%;
-  top: 0;
-  border: 1px solid #000000;
-  background-color: #f1ef84;
-}
-
-main {
-  width: 100%;
-  margin: 0 auto;
-  background-color: #84f1cb;
-}
-
-footer {
-  width: 100%;
-  align-items: center;
-  bottom: 0;
-  background-color: #e084f1;
-}
-
-</style>
-
-<script>
-
-console.log('vanilla script');
-</script>
-
-</head>
-
-<body >
-
-	<header>
-		<div class="TopContent">
-			<div class="Header">
-				모바일용 sample 페이지 CSS 테스트용
+			function testAjax() {
+				$.ajax({
+					type : "POST",
+					url: "/checkUser.do",
+					async : true,
+					dataType : 'json',
+					data : JSON.stringify({
+						"regId" : "sub12"
+					}),
+					success : function(res){
+						alert(res.RESCODE+res.RESMSG);
+					},
+					error : function(request, status, error) {
+						console.log(error);
+					}
+				});
+			}
+			
+		</script>
+	</head>
+	
+	<body >
+	
+		<header>
+			<div class="TopContent">
+				<div class="Header">
+					모바일용 sample 페이지 CSS 테스트용
+				</div>
+				<div class="HeaderMenu" >
+					우측
+				</div>
 			</div>
-			<div class="HeaderMenu" >
-				우측
+		</header>
+		<main>
+			<div class="mainContents">
+				본문
+				<div>
+					1-1 번재 본문
+					<button onclick="testAjax()">testAjax</button>
+				</div>
+				<div>
+					1-2 번재 본문
+					<button onclick="sampleFunction()">버튼</button>
+				</div>
 			</div>
-		</div>
-	</header>
-	<main>
-		<div class="mainContents">
-			본문
-			<div>
-				1-1 번재 본문
+			<div class="mainContents">
+				2번재 본문
 			</div>
-			<div>
-				1-2 번재 본문
+			<div class="mainContents">
+				3번재 본문
 			</div>
-		</div>
-		<div class="mainContents">
-			2번재 본문
-		</div>
-		<div class="mainContents">
-			3번재 본문
-		</div>
-	</main>
-	<footer>
-		<div class="footer">
-			풋터
-		</div>
-	</footer>
-
-</body>
+		</main>
+		<footer>
+			<div class="footer">
+				풋터
+			</div>
+		</footer>
+	</body>
 </html>
